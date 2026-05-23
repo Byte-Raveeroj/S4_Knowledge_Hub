@@ -1278,19 +1278,18 @@ const S03 = () => (
 
     {/* ── CREATOR TRACK ── */}
     <div style={{marginBottom:36}}>
-      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16,padding:"10px 16px",background:"#FFF7ED",border:"1.5px solid #F97316",borderRadius:10}}>
-        <span style={{fontSize:20}}>🔧</span>
-        <div>
-          <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:15,color:"#C2410C"}}>Creator Track — ทำครั้งเดียว (Admin / คนแรก)</div>
-          <div style={{fontSize:12,color:"#9A3412",marginTop:2}}>ถ้า S4-Wiki มีไฟล์อยู่แล้ว → ข้ามไปที่ Joiner Track ด้านล่าง</div>
-        </div>
-      </div>
       <div className="steps">
         <div className="step">
           <div className="step-num amber">1</div>
           <div className="step-body">
             <h4>Sync OneDrive ลงเครื่อง — S4 - Supplier Portal</h4>
-            <p style={{marginTop:4}}>เปิด <strong>File Explorer</strong> → ไปที่ OneDrive → หา <code className="inline">S4 - Supplier Portal › Documents › General</code> → คลิกขวา folder <strong>General</strong> → <strong>"Always keep on this device"</strong></p>
+            <ol style={{marginTop:8,marginBottom:0,paddingLeft:18,fontSize:13,color:"var(--ink-2)",lineHeight:1.9}}>
+              <li>เปิด <strong>OneDrive web</strong> (browser) → ไปที่ <code className="inline">S4 - Supplier Portal › Documents › General</code></li>
+              <li>คลิกไอคอน <strong>Sync</strong> <span style={{fontSize:11,color:"var(--muted)"}}>— อยู่แถบเมนูด้านบนของ OneDrive</span></li>
+              <li>เลือก path ในเครื่อง local ที่จะวาง → ยืนยัน</li>
+              <li>เมื่อ sync สำเร็จ เปิด <strong>File Explorer</strong> → ไปที่ folder <strong>General</strong> ที่ sync ลงมา</li>
+              <li>คลิกขวา folder <strong>General</strong> → <strong>"Always keep on this device"</strong></li>
+            </ol>
             <AnimStep1/>
             <div style={{display:"flex",gap:10,alignItems:"flex-start",padding:"10px 14px",background:"#F9FAFB",borderRadius:10,border:"1px solid #E5E7EB",marginTop:8}}>
               <span style={{fontSize:14,flexShrink:0,marginTop:1}}>💬</span>
@@ -1368,8 +1367,14 @@ Then create wiki/index.md and wiki/log.md with starter content.`}</CodeBlock>
           <div className="step-num">1</div>
           <div className="step-body">
             <h4>Sync OneDrive ลงเครื่อง</h4>
-            <p style={{marginTop:4}}>File Explorer → OneDrive → <code className="inline">S4 - Supplier Portal › Documents › General</code> → คลิกขวา General → <strong>"Always keep on this device"</strong></p>
-            <p style={{fontSize:13,color:"#5BA900",marginTop:6}}>✓ S4-Wiki จะปรากฏพร้อมไฟล์ทั้งหมดที่ Creator สร้างไว้</p>
+            <ol style={{marginTop:8,marginBottom:0,paddingLeft:18,fontSize:13,color:"var(--ink-2)",lineHeight:1.9}}>
+              <li>เปิด <strong>OneDrive web</strong> (browser) → ไปที่ <code className="inline">S4 - Supplier Portal › Documents › General</code></li>
+              <li>คลิกไอคอน <strong>Sync</strong> <span style={{fontSize:11,color:"var(--muted)"}}>— อยู่แถบเมนูด้านบนของ OneDrive</span></li>
+              <li>เลือก path ในเครื่อง local ที่จะวาง → ยืนยัน</li>
+              <li>เมื่อ sync สำเร็จ เปิด <strong>File Explorer</strong> → ไปที่ folder <strong>General</strong> ที่ sync ลงมา</li>
+              <li>คลิกขวา folder <strong>General</strong> → <strong>"Always keep on this device"</strong></li>
+            </ol>
+            <p style={{fontSize:13,color:"#5BA900",marginTop:8}}>✓ S4-Wiki จะปรากฏพร้อมไฟล์ทั้งหมดที่ Creator สร้างไว้</p>
           </div>
         </div>
         <div className="step">
@@ -2008,8 +2013,7 @@ const S_PowerAutomate = () => (
         <div className="step-body">
           <h4>เปิด Power Automate</h4>
           <CodeBlock label="browser">{`flow.microsoft.com
-หรือ Microsoft 365 app launcher (grid icon) → "Power Automate"
-→ Login ด้วย company account เดียวกับ Teams`}</CodeBlock>
+→ Login ด้วย company account (@readyms.com)`}</CodeBlock>
           <Callout kind="tip" icon="💡">
             <div>ฟรีกับ Microsoft 365 Business ทุก plan · ไม่ต้องเป็น Admin · ใช้ company account ปกติได้เลย</div>
           </Callout>
@@ -2019,50 +2023,59 @@ const S_PowerAutomate = () => (
         <div className="step-num">2</div>
         <div className="step-body">
           <h4>สร้าง Flow ใหม่</h4>
-          <CodeBlock label="power automate">{`คลิก "Create" (แถบซ้าย)
-→ เลือก "Automated cloud flow"
-→ Flow name: "S4 General → raw sync"
-→ ค้นหา trigger: "When a file is created or modified"
-→ เลือกตัวที่มีไอคอน SharePoint
+          <CodeBlock label="power automate">{`คลิก "Create" (เมนูซ้าย)
+→ เลือก "Automated cloud flow" (ตัวแรกซ้ายสุด)
+
+ในหน้า "Build an automated cloud flow":
+→ Flow name: S4-Wiki Auto-sync General → raw/
+→ เลือก trigger: "When an item is created or modified"
+   (ใต้หัวข้อ SharePoint — ไม่ใช่ OneDrive for Business)
 → คลิก Create`}</CodeBlock>
         </div>
       </div>
       <div className="step">
         <div className="step-num">3</div>
         <div className="step-body">
-          <h4>ตั้งค่า Trigger — ชี้ไปที่ General</h4>
-          <CodeBlock label="trigger settings">{`Site Address: S4 - Supplier Portal
-Library Name: Documents
-Folder: /General
-(ครอบคลุมทุก subfolder ใน General อัตโนมัติ)`}</CodeBlock>
+          <h4>ตั้งค่า Trigger — คลิก card แล้วกรอก 2 fields</h4>
+          <CodeBlock label="trigger settings">{`Site Address → dropdown ไม่ขึ้น → คลิก "Enter custom value"
+  https://readymanagementsolutions.sharepoint.com/sites/S4-SupplierPortal
+
+List Name → dropdown ไม่ขึ้น → คลิก "Enter custom value"
+  Documents`}</CodeBlock>
+          <Callout kind="info" icon="ℹ">
+            <div>ถ้า dropdown ไม่โหลด = ยังไม่ได้ connect → คลิก <strong>"Change connection"</strong> ด้านล่าง → Sign in → กลับมากรอกใหม่</div>
+          </Callout>
         </div>
       </div>
       <div className="step">
         <div className="step-num">4</div>
         <div className="step-body">
-          <h4>เพิ่ม Action — Copy file ไปที่ raw/</h4>
-          <CodeBlock label="action settings">{`คลิก "+ New step"
-→ ค้นหา: "Copy file" → เลือก SharePoint
+          <h4>เพิ่ม Action — Copy file (SharePoint)</h4>
+          <CodeBlock label="action settings">{`คลิก "+" ใต้ trigger card
+→ Search: "copy file"
+→ เลือก SharePoint → "Copy file" (ไม่ใช่ OneDrive for Business)
+→ เลือก connection (raveeroj.thiensiripipat@readyms.com)
 
-ตั้งค่า:
-Current Site Address: S4 - Supplier Portal
-File to Copy: [File Identifier] ← จาก dynamic content
-Destination Site: S4 - Supplier Portal (เดิม)
-Destination Folder: /General/S4-Wiki/raw
-If another file is already there: Replace`}</CodeBlock>
-          <Callout kind="info" icon="ℹ">
-            <div><strong>Mirror subfolder:</strong> ถ้าต้องการให้ raw/ preserve structure เหมือน General (เช่น raw/Item Management/BRD.pdf) ต้องเพิ่ม Expression ใน Destination Folder — แนะนำให้ขอความช่วยเหลือจาก IT Admin ในขั้นตอนนี้</div>
-          </Callout>
+กรอก 5 fields:
+  Current Site Address    : S4 - Supplier Portal (เดียวกับ trigger)
+  File to Copy            : คลิก field → ⚡ dynamic content → เลือก "Identifier"
+  Destination Site Address: S4 - Supplier Portal (เดียวกัน)
+  Destination Folder      : /Shared Documents/General/S4-Wiki/raw
+  If another file...      : Replace`}</CodeBlock>
         </div>
       </div>
       <div className="step">
         <div className="step-num">5</div>
         <div className="step-body">
-          <h4>Save + Test</h4>
+          <h4>Save → Test → ยืนยันผล</h4>
           <CodeBlock label="test">{`คลิก Save (มุมบนขวา)
-→ คลิก Test → Manual → Run Flow
-→ ลองวางไฟล์ใน General ดู
-→ รอ 1-2 นาที → เช็คว่า S4-Wiki/raw/ มีไฟล์ขึ้นมาไหม ✓`}</CodeBlock>
+→ คลิก Test → เลือก "Manually" → คลิก Test
+
+ทดสอบ:
+→ ไปที่ SharePoint General → วางไฟล์ทดสอบไว้
+→ กลับมาดู Power Automate — รอ flow run
+→ "Your flow ran successfully" ✅
+→ เช็ค SharePoint: General/S4-Wiki/raw/ → ไฟล์ปรากฏ ✓`}</CodeBlock>
         </div>
       </div>
     </div>
@@ -2312,6 +2325,101 @@ const S11 = () => (
         </ul>
       </div>
     </div>
+
+    {(()=>{
+      const claudeMdContent = `# CLAUDE.md — S4 Supplier Portal Wiki Schema
+
+You are the maintainer of a project knowledge wiki for the **S4 Supplier Portal IM (NPD)**,
+run by READY MS (consulting). Your job is to keep the wiki current, consistent, and
+well-organized as new sources arrive.
+
+## Architecture
+
+- \`raw/\` — original sources. IMMUTABLE. Read only. Never modify.
+  - \`raw/workshops/\` — workshop notes (filename: YYYY-MM-DD-ws<NN>-<topic>.md)
+  - \`raw/as-is/\` — as-is process documentation (PDFs, docs)
+  - \`raw/meetings/\` — meeting minutes (filename: YYYY-MM-DD-<who>.md)
+  - \`raw/assets/\` — images, screenshots
+  - \`raw/_archive/\` — files moved here instead of deleted. Never delete from vault.
+- \`wiki/\` — your output. You own these files. Humans read them.
+  - \`wiki/index.md\` — catalog of every page, one line each
+  - \`wiki/log.md\` — append-only timeline (## [YYYY-MM-DD] <op> | <title>)
+  - \`wiki/entities/\` — one page per person, team, system, module
+  - \`wiki/topics/\` — one page per business topic (NPD, approval flow, invoice, etc.)
+  - \`wiki/summaries/\` — one summary page per ingested source
+
+## Operations
+
+### INGEST (when user says "ingest <source>" or drops a file)
+1. If source file is outside raw/, copy it from its given path into the appropriate
+   raw/ subfolder first. Never skip this step.
+2. Read the source completely.
+3. Discuss 3-5 key takeaways with the user. Wait for confirmation.
+4. Write \`wiki/summaries/<source-slug>.md\` — a 200-400 word summary,
+   YAML frontmatter (date, source, tags), wikilinks to entities/topics.
+5. Update relevant \`wiki/entities/<entity>.md\` pages (create if new).
+6. Update relevant \`wiki/topics/<topic>.md\` pages (create if new).
+7. If new info contradicts an existing page, ADD a "Δ Contradiction" section
+   on the topic page citing both sources. Do not silently overwrite.
+8. Append entry to \`wiki/log.md\` (## [YYYY-MM-DD] ingest | <title>).
+9. Update \`wiki/index.md\` with the new pages.
+
+### QUERY (when user asks a question)
+1. Read \`wiki/index.md\` first to find relevant pages.
+2. Read those pages. Synthesize an answer.
+3. Always include \`[[wikilinks]]\` to the pages you used as citations.
+4. If the answer is novel and likely to be re-asked, offer to file it as
+   a new page in \`wiki/topics/\` or \`wiki/analyses/\`.
+
+### LINT (when user says "lint" or "health-check")
+Check the wiki for: orphan pages (no inbound links), stale claims,
+unflagged contradictions, missing cross-references, important concepts
+mentioned but lacking their own page. Report findings; do not auto-fix.
+
+## Conventions
+
+- All dates: YYYY-MM-DD.
+- Filenames: kebab-case, lowercase.
+- Wikilinks always: \`[[entity-name]]\` or \`[[topics/npd-approval]]\`.
+- YAML frontmatter on every wiki page:
+  \`\`\`yaml
+  ---
+  type: entity | topic | summary | analysis
+  tags: [s4, <relevant>]
+  updated: YYYY-MM-DD
+  sources: [list of raw/ paths]
+  ---
+  \`\`\`
+- Language: write in **English**. Quote Thai/local terms verbatim when
+  they appear in sources, in parentheses.
+- Tone: factual, concise. Use bullet points over prose where possible.
+
+## File ownership (DO NOT VIOLATE)
+
+- \`raw/**\` — human-owned, immutable. Never edit.
+- \`wiki/**\` — LLM-owned. Humans read only.
+- \`CLAUDE.md\` — co-owned. Discuss changes before editing.
+
+## When unsure
+
+Ask the user. Don't guess about the S4 domain. Don't fabricate stakeholders.
+If a source is ambiguous, surface the ambiguity in the summary.`;
+      const handleDownload = () => {
+        const blob = new Blob([claudeMdContent], {type:"text/markdown;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "CLAUDE.md"; a.click();
+        URL.revokeObjectURL(url);
+      };
+      return (
+        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
+          <button onClick={handleDownload} style={{display:"inline-flex",alignItems:"center",gap:8,padding:"10px 20px",background:"var(--primary)",color:"#fff",border:"none",borderRadius:10,fontFamily:"var(--font-body)",fontWeight:700,fontSize:14,cursor:"pointer",boxShadow:"var(--shadow-sm)"}}>
+            ⬇ Download CLAUDE.md
+          </button>
+          <span style={{fontSize:12,color:"var(--muted)"}}>วางไฟล์นี้ที่ root ของ S4-Wiki ก่อนรัน claude</span>
+        </div>
+      );
+    })()}
 
     <CodeBlock label="CLAUDE.md · paste at S4-Wiki root">{`# CLAUDE.md — S4 Supplier Portal Wiki Schema
 
