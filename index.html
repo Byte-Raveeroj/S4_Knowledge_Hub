@@ -340,7 +340,8 @@ NAV.push(
   {id:"use-prompts",   num:"11",label:"Cheat Sheet",     labelTh:"โพรมต์พร้อมใช้ 23+",     group:"USE"},
   {id:"github",        num:"12",label:"GitHub Actions",  labelTh:"Notion Polling (Advanced)",group:"Advanced"},
   {id:"faq",           num:"13",label:"FAQ",             labelTh:"คำถามพบบ่อย",           group:"Reference"},
-  {id:"next-actions",  num:"14",label:"Next Actions",    labelTh:"ขยายต่อในอนาคต",        group:"Reference"},
+  {id:"power-automate",num:"14",label:"Power Automate",  labelTh:"Auto-sync ทุกไฟล์ใหม่", group:"Reference"},
+  {id:"next-actions",  num:"15",label:"Next Actions",    labelTh:"ขยายต่อในอนาคต",        group:"Reference"},
 );
 
 /* ── 00 Overview ── */
@@ -597,55 +598,47 @@ claude`}</CodeBlock>
     <div id="vault-structure" style={{marginTop:24,scrollMarginTop:80}}>
       <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
         <div style={{width:3,height:22,borderRadius:2,background:"#7C3AED"}}/>
-        <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:15,color:"#7C3AED"}}>📁 โครงสร้าง BigC-IM-Wiki ที่แนะนำ</div>
+        <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:15,color:"#7C3AED"}}>📁 โครงสร้าง S4-Wiki (Standard Schema)</div>
         <div style={{fontSize:11,background:"#EDE9FE",color:"#5B21B6",padding:"2px 8px",borderRadius:20,fontWeight:700}}>Obsidian Vault</div>
       </div>
-      <div style={{background:"#1E1B2E",borderRadius:14,padding:"16px 20px",fontFamily:"var(--font-mono)",fontSize:13,lineHeight:1.8,color:"#E2E8F0",position:"relative",overflow:"hidden"}}>
+      <div style={{background:"#1E1B2E",borderRadius:14,padding:"16px 20px",fontFamily:"var(--font-mono)",fontSize:13,lineHeight:1.9,color:"#E2E8F0",position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:"linear-gradient(90deg,#7C3AED,#A855F7,#C084FC)",borderRadius:"14px 14px 0 0"}}/>
-        <div style={{color:"#A78BFA",fontWeight:700,marginBottom:6}}>📂 BigC-IM-Wiki/</div>
         {[
-          {indent:1, icon:"📄", name:"CLAUDE.md",       note:"context หลักของ project — Claude อ่านทุกครั้ง",  color:"#FCD34D"},
-          {indent:1, icon:"📄", name:"QA-Strategy.md",  note:"กลยุทธ์ QA + risk matrix",                      color:"#86EFAC"},
-          {indent:1, icon:"📄", name:"Field-Catalog.md",note:"340 fields + conditional rules",                 color:"#86EFAC"},
-          {indent:1, icon:"📂", name:"01_Approval-Flow/",note:"",                                              color:"#93C5FD", isDir:true},
-          {indent:2, icon:"📄", name:"flow-diagram.md",  note:"approval lanes, SLA, routing",                  color:"#E2E8F0"},
-          {indent:2, icon:"📄", name:"open-questions.md",note:"คำถามรอ PO/Dev ตอบ",                            color:"#E2E8F0"},
-          {indent:1, icon:"📂", name:"02_BRD/",          note:"",                                              color:"#93C5FD", isDir:true},
-          {indent:2, icon:"📄", name:"BRD-summary.md",   note:"สรุป BRD Phase 1 NPD",                         color:"#E2E8F0"},
-          {indent:2, icon:"📄", name:"scope-decisions.md",note:"in-scope / out-of-scope decisions",            color:"#E2E8F0"},
-          {indent:1, icon:"📂", name:"03_QA/",           note:"",                                              color:"#93C5FD", isDir:true},
-          {indent:2, icon:"📄", name:"TC-summary.md",    note:"TC count, status, gaps",                        color:"#E2E8F0"},
-          {indent:2, icon:"📄", name:"TC-gaps.md",       note:"coverage gaps + next TC queue",                 color:"#E2E8F0"},
-          {indent:1, icon:"📂", name:"04_Sessions/",     note:"",                                              color:"#93C5FD", isDir:true},
-          {indent:2, icon:"📄", name:"2026-05-23.md",    note:"วันนี้ — session notes",                        color:"#E2E8F0"},
-          {indent:2, icon:"📄", name:"_template.md",     note:"copy ก่อนทำ session ใหม่",                      color:"#94A3B8"},
-          {indent:1, icon:"📂", name:"05_Dev-Snapshots/",note:"",                                              color:"#93C5FD", isDir:true},
-          {indent:2, icon:"📄", name:"dev-21-May.md",    note:"diff + key changes",                            color:"#E2E8F0"},
-          {indent:1, icon:"📂", name:"06_References/",   note:"",                                              color:"#93C5FD", isDir:true},
-          {indent:2, icon:"📄", name:"role-matrix.md",   note:"11 roles × permissions",                        color:"#E2E8F0"},
-          {indent:2, icon:"📄", name:"glossary.md",      note:"คำศัพท์ + abbreviations",                       color:"#E2E8F0"},
-        ].map((row,i) => (
-          <div key={i} style={{display:"flex",alignItems:"baseline",paddingLeft:(row.indent-1)*20}}>
-            <span style={{color:"#4B5563",marginRight:4,userSelect:"none"}}>{row.indent===1?"├─ ":"│  ├─ "}</span>
+          {indent:0,icon:"📂",name:"S4-Wiki/",           color:"#A78BFA",bold:true,  note:""},
+          {indent:1,icon:"📄",name:"CLAUDE.md",          color:"#FCD34D",bold:false, note:"← schema · YOU write · Claude reads every time"},
+          {indent:1,icon:"📄",name:"README.md",          color:"#86EFAC",bold:false, note:"← team onboarding · Claude creates"},
+          {indent:1,icon:"📂",name:"raw/",               color:"#93C5FD",bold:true,  note:"← YOU drop source files here (IMMUTABLE)"},
+          {indent:2,icon:"📂",name:"workshops/",         color:"#CBD5E1",bold:false, note:""},
+          {indent:2,icon:"📂",name:"as-is/",             color:"#CBD5E1",bold:false, note:""},
+          {indent:2,icon:"📂",name:"meetings/",          color:"#CBD5E1",bold:false, note:""},
+          {indent:2,icon:"📂",name:"assets/",            color:"#CBD5E1",bold:false, note:"screenshots, images"},
+          {indent:2,icon:"📂",name:"_archive/",          color:"#F87171",bold:false, note:"← ย้ายมาที่นี่แทนการลบ 🚨"},
+          {indent:1,icon:"📂",name:"wiki/",              color:"#93C5FD",bold:true,  note:"← Claude writes here · humans read only"},
+          {indent:2,icon:"📄",name:"index.md",           color:"#86EFAC",bold:false, note:"catalog of every page"},
+          {indent:2,icon:"📄",name:"log.md",             color:"#86EFAC",bold:false, note:"append-only timeline"},
+          {indent:2,icon:"📂",name:"entities/",          color:"#CBD5E1",bold:false, note:"people, systems, stakeholders"},
+          {indent:2,icon:"📂",name:"topics/",            color:"#CBD5E1",bold:false, note:"business topics: NPD, approval flow, etc."},
+          {indent:2,icon:"📂",name:"summaries/",         color:"#CBD5E1",bold:false, note:"one summary per ingested source"},
+          {indent:1,icon:"📂",name:".obsidian/",         color:"#6B7280",bold:false, note:"← Obsidian config (DO NOT EDIT)"},
+        ].map((row,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"baseline",paddingLeft:row.indent*18}}>
+            <span style={{color:"#4B5563",marginRight:6,userSelect:"none",fontSize:11}}>
+              {row.indent===0?"":row.indent===1?"├─ ":"│  ├─ "}
+            </span>
             <span style={{marginRight:6}}>{row.icon}</span>
-            <span style={{color:row.color,fontWeight:row.isDir?700:400}}>{row.name}</span>
-            {row.note && <span style={{color:"#6B7280",fontSize:11,marginLeft:8}}>— {row.note}</span>}
+            <span style={{color:row.color,fontWeight:row.bold?700:400}}>{row.name}</span>
+            {row.note&&<span style={{color:"#6B7280",fontSize:11,marginLeft:8}}>{row.note}</span>}
           </div>
         ))}
-        <div style={{marginTop:8,paddingTop:8,borderTop:"1px dashed rgba(255,255,255,0.1)",color:"#6B7280",fontSize:11}}>
-          💡 CLAUDE.md บน root = context หลัก · โฟลเดอร์อื่นเพิ่มตามความต้องการทีม
+        <div style={{marginTop:10,paddingTop:8,borderTop:"1px dashed rgba(255,255,255,0.1)",display:"flex",gap:16,flexWrap:"wrap"}}>
+          <span style={{color:"#FCD34D",fontSize:11}}>🟡 CLAUDE.md = soul of vault</span>
+          <span style={{color:"#86EFAC",fontSize:11}}>🟢 wiki/ = Claude's output</span>
+          <span style={{color:"#93C5FD",fontSize:11}}>🔵 raw/ = human input zone</span>
+          <span style={{color:"#F87171",fontSize:11}}>🔴 _archive/ = never delete, archive instead</span>
         </div>
       </div>
-      <div style={{display:"flex",gap:10,marginTop:10,flexWrap:"wrap"}}>
-        {[
-          {emoji:"🟢",text:"ไฟล์ที่ Claude ควรอ่านทันที",bg:"#F0FDF4",border:"#86EFAC",color:"#15803D"},
-          {emoji:"🔵",text:"โฟลเดอร์ — เพิ่มตามโปรเจค",bg:"#EFF6FF",border:"#BFDBFE",color:"#1D4ED8"},
-          {emoji:"🟡",text:"ไฟล์สำคัญ — Claude ใช้เป็น memory",bg:"#FFFBEB",border:"#FCD34D",color:"#92400E"},
-        ].map((tag,i)=>(
-          <div key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:11,padding:"3px 10px",borderRadius:20,background:tag.bg,border:`1px solid ${tag.border}`,color:tag.color}}>
-            <span>{tag.emoji}</span><span>{tag.text}</span>
-          </div>
-        ))}
+      <div style={{marginTop:10,padding:"10px 14px",background:"#FFFBEB",border:"1px solid #FCD34D",borderRadius:10,fontSize:13,color:"#92400E"}}>
+        <strong>Rule:</strong> raw/ = ไฟล์ที่มนุษย์วาง (IMMUTABLE) · wiki/ = ไฟล์ที่ Claude เขียน (read-only for humans) · ลบอะไรก็ตาม → ย้ายเข้า raw/_archive/ เสมอ
       </div>
     </div>
 
@@ -686,7 +679,7 @@ const S_GitHub = () => (
     thai={<>ถ้าทีมไม่ได้ใช้ Notion หรือไม่ต้องการ auto-poll ข้ามขั้นตอนนี้ได้เลย — ไม่กระทบ Scenario 1 และ 2 แต่อย่างใด</>}
   >
     <Callout kind="warn" icon="⚠">
-      <div><strong>Optional Step</strong> — Section นี้ทำเฉพาะถ้าต้องการ Scenario 3 (Notion polling อัตโนมัติ) ถ้าไม่ต้องการ ข้ามได้เลย · สำหรับข้อมูล MS Teams notification ดูที่ <a href="#next-actions" style={{color:"var(--amber)"}}>Section 14 · Next Actions</a></div>
+      <div><strong>Optional Step</strong> — Section นี้ทำเฉพาะถ้าต้องการ Scenario 3 (Notion polling อัตโนมัติ) ถ้าไม่ต้องการ ข้ามได้เลย · สำหรับข้อมูล MS Teams notification ดูที่ <a href="#next-actions" style={{color:"var(--amber)"}}>Section 15 · Next Actions</a></div>
     </Callout>
     <Callout kind="info" icon="ℹ">
       <div><strong>ทำก่อนให้ทีม:</strong> Admin หรือคนดูแล GitHub ตั้ง workflow นี้ก่อน — พอเสร็จแล้ว ทีมถึงค่อยทำ Section 03 (Team Setup) บนเครื่องตัวเอง</div>
@@ -708,7 +701,7 @@ const S_GitHub = () => (
     </div>
     <Callout kind="tip" icon="💡">
       <div>
-        <strong>Notion polling ทำงานได้ทันที</strong> โดยไม่ต้องมี Teams Webhook — ดู workflow log ใน GitHub Actions แทน · ถ้าต้องการเพิ่ม Teams notification ในภายหลัง ดูขั้นตอนใน <a href="#next-actions" style={{color:"var(--primary)"}}>Section 14 · Next Actions</a>
+        <strong>Notion polling ทำงานได้ทันที</strong> โดยไม่ต้องมี Teams Webhook — ดู workflow log ใน GitHub Actions แทน · ถ้าต้องการเพิ่ม Teams notification ในภายหลัง ดูขั้นตอนใน <a href="#next-actions" style={{color:"var(--primary)"}}>Section 15 · Next Actions</a>
       </div>
     </Callout>
   </Section>
@@ -1267,65 +1260,137 @@ function AnimClaudeCode() {
 
 /* ── 03 Team Setup ── */
 const S03 = () => (
-  <Section id="setup" eyebrow="03 · Setup" title="Team Setup — แต่ละคนทำบนเครื่องตัวเอง"
-    subtitle={<>~5 นาที/คน · ทำหลังจาก Admin ตั้ง GitHub Actions ใน Section 02 แล้ว</>}
-    thai={<>OneDrive เก็บ BigC-IM-Wiki ไว้อยู่แล้ว — แค่ sync ลงเครื่อง แล้ว point Obsidian + Claude ไปที่นั่น</>}
+  <Section id="setup" eyebrow="03 · Setup" eyebrowKind="green"
+    title="Team Setup"
+    subtitle={<>2 tracks · <strong>🔧 Creator</strong> ทำครั้งเดียวก่อนให้ทีม · <strong>👥 Joiner</strong> ทุกคนทำบนเครื่องตัวเอง</>}
+    thai={<>Creator = คนแรกที่ตั้ง vault (ทำครั้งเดียว) · Joiner = สมาชิกทีมทุกคนที่ต่อเข้ามาใหม่</>}
   >
-    <div className="steps">
-      <div className="step">
-        <div className="step-num">1</div>
-        <div className="step-body">
-          <h4>Sync folder BigC-IM-Wiki จาก OneDrive ลงเครื่อง</h4>
-          <p style={{marginTop:4}}>
-            OneDrive เก็บ <code className="inline">BigC-IM-Wiki/</code> ไว้อยู่แล้ว — แค่ดาวน์โหลด folder ลงเครื่อง local ของคุณ
-            <span className="thai"> ทำครั้งเดียว หลังจากนี้ OneDrive sync ให้อัตโนมัติตลอด 24/7</span>
-          </p>
-          <CodeBlock label="วิธีที่ 1 — OneDrive App (แนะนำ)">{`เปิด File Explorer → OneDrive - Big C
-→ ค้นหา folder BigC-IM-Wiki
-→ คลิกขวา → "Always keep on this device"
-→ OneDrive download ลงเครื่องให้เลย`}</CodeBlock>
-          <CodeBlock label="วิธีที่ 2 — Add Shortcut">{`เปิด OneDrive web (office.com)
-→ ค้นหา BigC-IM-Wiki ที่ทีม share ไว้
-→ คลิก "Add shortcut to My files"
-→ folder จะปรากฏใน:
-  C:\\Users\\[your-name]\\OneDrive - Big C\\BigC-IM-Wiki\\`}</CodeBlock>
-          <Callout kind="info" icon="ℹ">
-            <div>path ที่ sync ลงมาจะเป็นแบบนี้: <code className="inline">C:\Users\[your-name]\OneDrive - Big C\BigC-IM-Wiki\</code><br/>(ชื่อ OneDrive folder อาจต่างกันเล็กน้อยตาม M365 tenant ของบริษัท)</div>
-          </Callout>
-          <div style={{display:"flex",gap:10,alignItems:"flex-start",padding:"10px 14px",background:"#F9FAFB",borderRadius:10,border:"1px solid #E5E7EB",marginBottom:8}}>
-            <span style={{fontSize:14,flexShrink:0,marginTop:1}}>ℹ️</span>
-            <div style={{fontSize:13,color:"#374151",lineHeight:1.55}}><strong style={{color:"#1F2937"}}>"Always keep on this device"</strong> จะปรากฏเฉพาะ folder ที่ sync มาจาก OneDrive เท่านั้น — folder ปกติบนเครื่องจะไม่มีตัวเลือกนี้</div>
-          </div>
-          <AnimStep1/>
-          <div style={{display:"flex",gap:10,alignItems:"flex-start",padding:"10px 14px",background:"#F9FAFB",borderRadius:10,border:"1px solid #E5E7EB",marginTop:8}}>
-            <span style={{fontSize:14,flexShrink:0,marginTop:1}}>💬</span>
-            <div style={{fontSize:13,color:"#374151",lineHeight:1.55}}><strong style={{color:"#1F2937"}}>เจอ Error 0x8004016c?</strong> กด <strong>"Next"</strong> ผ่านได้เลย — เป็นแค่ policy ของ IT Admin ปิด folder backup ไว้ ไม่กระทบ SharePoint Sync แต่อย่างใด</div>
-          </div>
+    {/* ── DELETION WARNING ── */}
+    <div style={{background:"#FEF2F2",border:"2px solid #DC2626",borderRadius:12,padding:"14px 18px",marginBottom:24,display:"flex",gap:12,alignItems:"flex-start"}}>
+      <span style={{fontSize:22,flexShrink:0,lineHeight:1}}>🚨</span>
+      <div>
+        <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:14,color:"#B91C1C",marginBottom:4}}>ห้ามลบไฟล์หรือ folder จาก vault บนเครื่อง local เด็ดขาด</div>
+        <div style={{fontSize:13,color:"#7F1D1D",lineHeight:1.6}}>
+          <strong style={{color:"#B91C1C"}}>ลบ local = ลบ OneDrive = ลบเครื่องทุกคนในทีมทันที</strong> · ถ้าต้องการ "เก็บออก" → ย้ายไปที่ <code style={{background:"#FEE2E2",padding:"1px 5px",borderRadius:4,fontSize:12}}>raw/_archive/</code> แทน ห้ามกด Delete · ถ้าเผลอลบ → ติดต่อ <strong>Raveeroj</strong> (raveeroj.thiensiripipat@readyms.com) — กู้คืนได้จาก SharePoint Recycle Bin ภายใน 93 วัน
         </div>
       </div>
-      <div className="step">
-        <div className="step-num">2</div>
-        <div className="step-body">
-          <h4>เปิด Obsidian → Open folder as vault</h4>
-          <CodeBlock label="obsidian">{`Open folder as vault
-→ เลือก C:\\Users\\[your-name]\\OneDrive - Big C\\BigC-IM-Wiki\\
-→ Trust → เห็น 40+ pages ใน Graph View ทันที`}</CodeBlock>
-          <Callout kind="tip" icon="💡">
-            <div>ถ้า Obsidian มี vault เดิมอยู่แล้ว → ไปที่ Vault switcher (ไอคอนบ้าน ซ้ายล่าง) → Open folder as vault → เลือก path ใหม่</div>
-          </Callout>
-          <AnimStep2/>
+    </div>
+
+    {/* ── CREATOR TRACK ── */}
+    <div style={{marginBottom:36}}>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16,padding:"10px 16px",background:"#FFF7ED",border:"1.5px solid #F97316",borderRadius:10}}>
+        <span style={{fontSize:20}}>🔧</span>
+        <div>
+          <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:15,color:"#C2410C"}}>Creator Track — ทำครั้งเดียว (Admin / คนแรก)</div>
+          <div style={{fontSize:12,color:"#9A3412",marginTop:2}}>ถ้า S4-Wiki มีไฟล์อยู่แล้ว → ข้ามไปที่ Joiner Track ด้านล่าง</div>
         </div>
       </div>
-      <div className="step">
-        <div className="step-num">3</div>
-        <div className="step-body">
-          <h4>เปิด Claude Code จาก path เดียวกัน — หรือ สั่งให้ Claude Code ไปอ่านจาก path นี้</h4>
-          <CodeBlock label="terminal">{`cd "C:\\Users\\[your-name]\\OneDrive - Big C\\BigC-IM-Wiki"
+      <div className="steps">
+        <div className="step">
+          <div className="step-num amber">1</div>
+          <div className="step-body">
+            <h4>Sync OneDrive ลงเครื่อง — S4 - Supplier Portal</h4>
+            <p style={{marginTop:4}}>เปิด <strong>File Explorer</strong> → ไปที่ OneDrive → หา <code className="inline">S4 - Supplier Portal › Documents › General</code> → คลิกขวา folder <strong>General</strong> → <strong>"Always keep on this device"</strong></p>
+            <AnimStep1/>
+            <div style={{display:"flex",gap:10,alignItems:"flex-start",padding:"10px 14px",background:"#F9FAFB",borderRadius:10,border:"1px solid #E5E7EB",marginTop:8}}>
+              <span style={{fontSize:14,flexShrink:0,marginTop:1}}>💬</span>
+              <div style={{fontSize:13,color:"#374151",lineHeight:1.55}}><strong>เจอ Error 0x8004016c?</strong> กด "Next" ผ่านได้เลย — เป็นแค่ policy ของ IT Admin ไม่กระทบ SharePoint Sync</div>
+            </div>
+          </div>
+        </div>
+        <div className="step">
+          <div className="step-num amber">2</div>
+          <div className="step-body">
+            <h4>สร้าง folder <code className="inline">S4-Wiki</code> ใน General</h4>
+            <CodeBlock label="file explorer">{`[OneDrive] › S4 - Supplier Portal › Documents › General
+→ คลิกขวา พื้นที่ว่าง → New Folder
+→ ตั้งชื่อ: S4-Wiki`}</CodeBlock>
+            <Callout kind="info" icon="ℹ">
+              <div>Folder S4-Wiki จะ sync ขึ้น OneDrive อัตโนมัติ — สมาชิกทีมจะเห็น S4-Wiki ใน General ภายใน ~60 วินาที</div>
+            </Callout>
+          </div>
+        </div>
+        <div className="step">
+          <div className="step-num amber">3</div>
+          <div className="step-body">
+            <h4>วาง <code className="inline">CLAUDE.md</code> ที่ root ของ S4-Wiki</h4>
+            <p style={{marginTop:4}}>copy template จาก <a href="#claude-md" onClick={e=>{e.preventDefault();document.getElementById('claude-md')?.scrollIntoView({behavior:'smooth'})}}>Section ✦ CLAUDE.md</a> → วางไฟล์ที่:</p>
+            <CodeBlock label="path">{`[...] › General › S4-Wiki › CLAUDE.md`}</CodeBlock>
+            <p style={{fontSize:12,color:"var(--muted)",marginTop:6}}>CLAUDE.md = สิ่งแรกที่ Claude อ่านทุกครั้ง — ต้องวางก่อนรัน claude</p>
+          </div>
+        </div>
+        <div className="step">
+          <div className="step-num amber">4</div>
+          <div className="step-body">
+            <h4>เปิด Terminal → cd เข้า S4-Wiki → รัน claude</h4>
+            <CodeBlock label="terminal">{`cd "[...path...] \\General\\S4-Wiki"
 claude`}</CodeBlock>
-          <p style={{marginTop:8,fontSize:13}}>
-            Claude จะอ่าน <code className="inline">CLAUDE.md</code> ใน folder นั้นอัตโนมัติ — รู้ schema, wiki structure, และ context ของโปรเจกต์ทันที — หรือถ้าเปิด Claude Code จาก project อื่น บอก path ตรงๆ ว่า <em>"อ่านจาก C:\Users\[your-name]\OneDrive - Big C\BigC-IM-Wiki"</em> ได้เลย
-          </p>
-          <AnimClaudeCode/>
+            <Callout kind="tip" icon="💡">
+              <div>วิธีหา path ที่แน่นอน: File Explorer → ไปที่ S4-Wiki → คลิก address bar ข้างบน → path จะปรากฏ → Copy</div>
+            </Callout>
+          </div>
+        </div>
+        <div className="step">
+          <div className="step-num amber">5</div>
+          <div className="step-body">
+            <h4>สั่ง Claude สร้าง folder structure</h4>
+            <p style={{marginTop:4}}>พิมพ์ prompt นี้ใน Claude (copy ได้เลย):</p>
+            <CodeBlock label="prompt → claude">{`Initialize this vault. Create all folders defined in CLAUDE.md:
+raw/workshops, raw/as-is, raw/meetings, raw/assets,
+wiki/entities, wiki/topics, wiki/summaries.
+Then create wiki/index.md and wiki/log.md with starter content.`}</CodeBlock>
+            <Callout kind="tip" icon="✓">
+              <div><strong>Claude จะสร้าง folder structure + starter files ทั้งหมดให้</strong> · OneDrive sync ขึ้นให้อัตโนมัติ · ทีม Joiner จะเห็น S4-Wiki มีโครงสร้างครบใน ~60 วินาที</div>
+            </Callout>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* ── JOINER TRACK ── */}
+    <div>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16,padding:"10px 16px",background:"#F0FDF4",border:"1.5px solid #22C55E",borderRadius:10}}>
+        <span style={{fontSize:20}}>👥</span>
+        <div>
+          <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:15,color:"#15803D"}}>Joiner Track — ทีมทุกคนทำบนเครื่องตัวเอง</div>
+          <div style={{fontSize:12,color:"#166534",marginTop:2}}>ทำหลัง Creator ตั้ง vault เสร็จแล้ว · ~5 นาที/คน</div>
+        </div>
+      </div>
+
+      {/* DELETION WARNING repeat for Joiner */}
+      <div style={{background:"#FEF2F2",border:"1.5px solid #FCA5A5",borderRadius:10,padding:"10px 14px",marginBottom:16,display:"flex",gap:10,alignItems:"flex-start"}}>
+        <span style={{fontSize:16,flexShrink:0}}>🚨</span>
+        <div style={{fontSize:13,color:"#B91C1C",lineHeight:1.55}}><strong>ย้ำ: ห้ามลบไฟล์ใน S4-Wiki จากเครื่อง local</strong> — ลบ local = ลบ OneDrive = หายทั้งทีม · ย้ายไป <code style={{background:"#FEE2E2",padding:"1px 5px",borderRadius:4,fontSize:12}}>raw/_archive/</code> แทนเสมอ</div>
+      </div>
+
+      <div className="steps">
+        <div className="step">
+          <div className="step-num">1</div>
+          <div className="step-body">
+            <h4>Sync OneDrive ลงเครื่อง</h4>
+            <p style={{marginTop:4}}>File Explorer → OneDrive → <code className="inline">S4 - Supplier Portal › Documents › General</code> → คลิกขวา General → <strong>"Always keep on this device"</strong></p>
+            <p style={{fontSize:13,color:"#5BA900",marginTop:6}}>✓ S4-Wiki จะปรากฏพร้อมไฟล์ทั้งหมดที่ Creator สร้างไว้</p>
+          </div>
+        </div>
+        <div className="step">
+          <div className="step-num">2</div>
+          <div className="step-body">
+            <h4>เปิด Obsidian → Open folder as vault → เลือก S4-Wiki</h4>
+            <CodeBlock label="obsidian">{`Vault switcher (ไอคอนล่างซ้าย) → Open folder as vault
+→ เลือก [...] \\General\\S4-Wiki
+→ Trust → เห็นไฟล์ .md ทันที ✓`}</CodeBlock>
+            <AnimStep2/>
+          </div>
+        </div>
+        <div className="step">
+          <div className="step-num">3</div>
+          <div className="step-body">
+            <h4>เปิด Claude Code จาก S4-Wiki</h4>
+            <CodeBlock label="terminal">{`cd "[...] \\General\\S4-Wiki"
+claude`}</CodeBlock>
+            <p style={{marginTop:8,fontSize:13,color:"var(--ink-2)"}}>Claude อ่าน CLAUDE.md อัตโนมัติ — รู้ vault structure และ context S4 ทันที · พร้อมรับคำสั่ง ingest / query / lint</p>
+            <AnimClaudeCode/>
+          </div>
         </div>
       </div>
     </div>
@@ -1599,7 +1664,7 @@ const S07 = () => (
     thai={<>ทีมไม่ต้องแจ้งใคร — GitHub Actions จับการเปลี่ยนแปลงเอง ingest เข้า vault + ทีมทุกเครื่องได้รับอัตโนมัติ</>}
   >
     <Infographic title="Scenario 3 · Notion → GitHub Actions → Claude ingest → OneDrive → ทุกเครื่อง" thai="poll อัตโนมัติ → Claude ingest → sync ลงทุก vault ในทีม" height={240}
-      caption="ใช้ Notion API (ฟรี) + GitHub Actions (ฟรี 2,000 นาที/เดือน) · MS Teams = optional (ดู Section 14)"
+      caption="ใช้ Notion API (ฟรี) + GitHub Actions (ฟรี 2,000 นาที/เดือน) · MS Teams = optional (ดู Section 15)"
       captionTh="ไม่มีค่าใช้จ่ายเพิ่มในทุกขั้นตอน — ใช้ Claude subscription ที่มีอยู่แล้ว">
       <div dangerouslySetInnerHTML={{__html: svgNotion}} style={{width:"100%"}}/>
     </Infographic>
@@ -1625,7 +1690,7 @@ const S07 = () => (
         ))}
       </div>
       <div style={{marginTop:12,padding:"7px 12px",background:"var(--bg-2)",borderRadius:8,border:"1px solid var(--border)",fontSize:12,fontFamily:"var(--font-thai)",color:"var(--ink-2)"}}>
-        ℹ️ Integration ได้รับแค่ permission <strong>"Read content"</strong> — ไม่มี write/delete access ปลอดภัย 100% · ถ้าต้องการ Teams notification ในภายหลัง ดูที่ <a href="#next-actions" style={{color:"var(--amber)"}}>Section 14</a>
+        ℹ️ Integration ได้รับแค่ permission <strong>"Read content"</strong> — ไม่มี write/delete access ปลอดภัย 100% · ถ้าต้องการ Teams notification ในภายหลัง ดูที่ <a href="#next-actions" style={{color:"var(--amber)"}}>Section 15</a>
       </div>
     </div>
     <div className="card">
@@ -1642,7 +1707,7 @@ const S07 = () => (
         <div><span style={{color:"#d29922"}}>  • QA Strategy v2.8</span></div>
       </div>
       <Callout kind="tip" icon="💡">
-        <div>อยากให้ทีมได้รับแจ้งอัตโนมัติก่อนรัน Claude? → ดู <a href="#next-actions" style={{color:"var(--primary)"}}>Section 14 · Next Actions</a> — Teams notification roadmap พร้อม setup steps</div>
+        <div>อยากให้ทีมได้รับแจ้งอัตโนมัติก่อนรัน Claude? → ดู <a href="#next-actions" style={{color:"var(--primary)"}}>Section 15 · Next Actions</a> — Teams notification roadmap พร้อม setup steps</div>
       </Callout>
     </div>
   </Section>
@@ -1729,7 +1794,7 @@ const S08 = () => (
       </div>
       <div className="card soft">
         <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:14,color:"var(--primary)",marginBottom:6}}>👥 Consumers (ขวา)</div>
-        <p style={{fontSize:13,margin:0}}>ทีมอ่านผ่าน Obsidian · ถาม Claude Code โดยตรง — ทั้ง 2 ช่องทางดึงจาก OneDrive vault เดียวกัน · Teams notification ดู <a href="#next-actions">Section 14</a></p>
+        <p style={{fontSize:13,margin:0}}>ทีมอ่านผ่าน Obsidian · ถาม Claude Code โดยตรง — ทั้ง 2 ช่องทางดึงจาก OneDrive vault เดียวกัน · Teams notification ดู <a href="#next-actions">Section 15</a></p>
       </div>
     </div>
   </Section>
@@ -1904,6 +1969,112 @@ const S_Cheatsheet = () => {
   );
 };
 
+/* ── 14 Power Automate — Auto-sync ── */
+const S_PowerAutomate = () => (
+  <Section id="power-automate" eyebrow="14 · Reference" eyebrowKind=""
+    title="Power Automate — Auto-sync ทุกไฟล์ใหม่เข้า raw/"
+    subtitle={<>ตั้งครั้งเดียว · ทำงานบน cloud 24/7 · ไม่ต้องเปิดเครื่องใคร · ฟรีกับ Microsoft 365</>}
+    thai={<>ไฟล์ใหม่ใน General → copy เข้า S4-Wiki/raw/ อัตโนมัติทันที · mirror subfolder structure</>}
+  >
+    <Callout kind="info" icon="ℹ">
+      <div><strong>ไม่บังคับ — Optional setup</strong> · ถ้าไม่ตั้ง Power Automate ก็ยังใช้งานได้ปกติ — แค่ต้อง copy ไฟล์เข้า raw/ เองเมื่อต้องการให้ Claude ingest · Power Automate ทำให้ขั้นตอนนี้เป็น auto</div>
+    </Callout>
+
+    <div style={{marginBottom:20}}>
+      <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:14,color:"var(--ink)",marginBottom:12}}>ทำงานยังไง?</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
+        {[
+          {step:"1",icon:"📄",title:"ไฟล์ใหม่ใน General",desc:"ใครวางไฟล์ใน S4 - Supplier Portal › Documents › General (หรือ subfolder ใดก็ตาม)"},
+          {step:"2",icon:"⚡",title:"Power Automate trigger",desc:"ตรวจพบไฟล์ใหม่/อัพเดทใน SharePoint ทันที — ไม่ต้องรอ"},
+          {step:"3",icon:"📁",title:"Copy → raw/ อัตโนมัติ",desc:"copy ไปวางใน S4-Wiki/raw/[subfolder เดียวกัน] · mirror structure ครบ"},
+        ].map(c=>(
+          <div key={c.step} className="card soft" style={{padding:"14px 16px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+              <div style={{width:24,height:24,borderRadius:6,background:"var(--primary)",color:"#fff",display:"grid",placeItems:"center",fontSize:12,fontWeight:700}}>{c.step}</div>
+              <span style={{fontSize:18}}>{c.icon}</span>
+            </div>
+            <div style={{fontFamily:"var(--font-display)",fontWeight:600,fontSize:13,color:"var(--ink)",marginBottom:4}}>{c.title}</div>
+            <div style={{fontSize:12,color:"var(--ink-2)",lineHeight:1.55}}>{c.desc}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:14,color:"var(--ink)",marginBottom:12}}>Step-by-Step Setup</div>
+
+    <div className="steps">
+      <div className="step">
+        <div className="step-num">1</div>
+        <div className="step-body">
+          <h4>เปิด Power Automate</h4>
+          <CodeBlock label="browser">{`flow.microsoft.com
+หรือ Microsoft 365 app launcher (grid icon) → "Power Automate"
+→ Login ด้วย company account เดียวกับ Teams`}</CodeBlock>
+          <Callout kind="tip" icon="💡">
+            <div>ฟรีกับ Microsoft 365 Business ทุก plan · ไม่ต้องเป็น Admin · ใช้ company account ปกติได้เลย</div>
+          </Callout>
+        </div>
+      </div>
+      <div className="step">
+        <div className="step-num">2</div>
+        <div className="step-body">
+          <h4>สร้าง Flow ใหม่</h4>
+          <CodeBlock label="power automate">{`คลิก "Create" (แถบซ้าย)
+→ เลือก "Automated cloud flow"
+→ Flow name: "S4 General → raw sync"
+→ ค้นหา trigger: "When a file is created or modified"
+→ เลือกตัวที่มีไอคอน SharePoint
+→ คลิก Create`}</CodeBlock>
+        </div>
+      </div>
+      <div className="step">
+        <div className="step-num">3</div>
+        <div className="step-body">
+          <h4>ตั้งค่า Trigger — ชี้ไปที่ General</h4>
+          <CodeBlock label="trigger settings">{`Site Address: S4 - Supplier Portal
+Library Name: Documents
+Folder: /General
+(ครอบคลุมทุก subfolder ใน General อัตโนมัติ)`}</CodeBlock>
+        </div>
+      </div>
+      <div className="step">
+        <div className="step-num">4</div>
+        <div className="step-body">
+          <h4>เพิ่ม Action — Copy file ไปที่ raw/</h4>
+          <CodeBlock label="action settings">{`คลิก "+ New step"
+→ ค้นหา: "Copy file" → เลือก SharePoint
+
+ตั้งค่า:
+Current Site Address: S4 - Supplier Portal
+File to Copy: [File Identifier] ← จาก dynamic content
+Destination Site: S4 - Supplier Portal (เดิม)
+Destination Folder: /General/S4-Wiki/raw
+If another file is already there: Replace`}</CodeBlock>
+          <Callout kind="info" icon="ℹ">
+            <div><strong>Mirror subfolder:</strong> ถ้าต้องการให้ raw/ preserve structure เหมือน General (เช่น raw/Item Management/BRD.pdf) ต้องเพิ่ม Expression ใน Destination Folder — แนะนำให้ขอความช่วยเหลือจาก IT Admin ในขั้นตอนนี้</div>
+          </Callout>
+        </div>
+      </div>
+      <div className="step">
+        <div className="step-num">5</div>
+        <div className="step-body">
+          <h4>Save + Test</h4>
+          <CodeBlock label="test">{`คลิก Save (มุมบนขวา)
+→ คลิก Test → Manual → Run Flow
+→ ลองวางไฟล์ใน General ดู
+→ รอ 1-2 นาที → เช็คว่า S4-Wiki/raw/ มีไฟล์ขึ้นมาไหม ✓`}</CodeBlock>
+        </div>
+      </div>
+    </div>
+
+    <Callout kind="tip" icon="★">
+      <div>
+        <strong>Bonus — Power Automate ช่วยป้องกัน Deletion ด้วย:</strong> Power Automate copy ทางเดียว (General → raw/) — ไม่ sync การลบ · ถ้าใครลบไฟล์จาก General → raw/ ยังมีสำเนาอยู่ · raw/ กลายเป็น historical archive อัตโนมัติ
+      </div>
+    </Callout>
+  </Section>
+);
+
 /* ── 13 FAQ ── */
 const S09 = () => (
   <Section id="faq" eyebrow="13 · FAQ" eyebrowKind="accent"
@@ -1920,7 +2091,7 @@ const S09 = () => (
     </FAQItem>
     <FAQItem q="ต้อง implement อะไรเพิ่มไหม?" qTh="setup นี้ต้องการ Dev ไหม?">
       <strong>ไม่ต้อง implement เพิ่มเลย</strong> — ทีมคนใดก็ได้ทำทุกขั้นตอนได้เอง: sync OneDrive + (Optional) สร้าง GitHub repo + copy-paste YAML + ใส่ secrets ทำครั้งเดียวใช้เวลา ~30 นาที
-      <div className="thai" style={{marginTop:8}}>Dev จำเป็นเฉพาะถ้าต้องการ full-automation หรือ Teams notification แบบ content-summary (ดู Section 14) — แนวทางพื้นฐานนี้ทีมทำเองได้ทั้งหมด</div>
+      <div className="thai" style={{marginTop:8}}>Dev จำเป็นเฉพาะถ้าต้องการ full-automation หรือ Teams notification แบบ content-summary (ดู Section 15) — แนวทางพื้นฐานนี้ทีมทำเองได้ทั้งหมด</div>
     </FAQItem>
     <FAQItem q="ถ้าสองคนแก้ไฟล์เดียวกันพร้อมกัน จะเกิดอะไร?" qTh="Conflict กรณีแก้ .md พร้อมกัน">
       OneDrive จะสร้าง <strong>conflict copy</strong> เช่น <code className="inline">Approval Flow (ชื่อ conflicted copy).md</code> ต้อง merge เอง กฎง่ายๆ: ถ้าจะ ingest ใหม่ แจ้งในกลุ่มก่อน <em>"กำลัง ingest..."</em> → รอ <em>"เสร็จแล้ว"</em> ค่อยทำต่อ
@@ -1933,7 +2104,7 @@ const S09 = () => (
 
 /* ── 14 Next Actions — ขยายต่อในอนาคต ── */
 const S_NextActions = () => (
-  <Section id="next-actions" eyebrow="14 · Next Actions" eyebrowKind="accent"
+  <Section id="next-actions" eyebrow="15 · Next Actions" eyebrowKind="accent"
     title="ขยายต่อในอนาคต — MS Teams Notification"
     thai={<>Teams notification มีประโยชน์จริงถ้าสามารถ <strong>สรุปเนื้อหา</strong> ที่เปลี่ยนแปลงได้ — ไม่ใช่แค่บอกว่า "มีคนอัพเดท"</>}
   >
@@ -2142,34 +2313,83 @@ const S11 = () => (
       </div>
     </div>
 
-    <CodeBlock label="CLAUDE.md · template (วาง BigC-IM-Wiki/CLAUDE.md)">{`# BigC IM Wiki — CLAUDE.md
+    <CodeBlock label="CLAUDE.md · paste at S4-Wiki root">{`# CLAUDE.md — S4 Supplier Portal Wiki Schema
 
-## Project Context
-- **Project**: BigC Item Management (IM) — New Supplier Portal
-- **Team**: READY MS QA × BigC IT
-- **Phase**: NPD (New Product Development) Phase 1
+You are the maintainer of a project knowledge wiki for the **S4 Supplier Portal IM (NPD)**,
+run by READY MS (consulting). Your job is to keep the wiki current, consistent, and
+well-organized as new sources arrive.
 
-## Wiki Structure
-- \`00_Approval-Flow.md\` — approval stages, SLA, routing logic
-- \`BRD-NPD-v1.md\`       — Business Requirements (source of truth)
-- \`Field-Catalog.md\`     — 340 fields, per-division visibility
-- \`QA-Strategy.md\`       — test cases, coverage, TC prefix rules
-- \`CLAUDE.md\`            — this file (Claude scope definition)
+## Architecture
 
-## Scope — What Claude should help with
-- Summarize changes in any .md file
-- Answer questions about approval flow, BRD, or field specs
-- Draft test cases in Thai/English following TC_Writing_Standard
-- Cross-reference requirements vs test coverage
+- \`raw/\` — original sources. IMMUTABLE. Read only. Never modify.
+  - \`raw/workshops/\` — workshop notes (filename: YYYY-MM-DD-ws<NN>-<topic>.md)
+  - \`raw/as-is/\` — as-is process documentation (PDFs, docs)
+  - \`raw/meetings/\` — meeting minutes (filename: YYYY-MM-DD-<who>.md)
+  - \`raw/assets/\` — images, screenshots
+  - \`raw/_archive/\` — files moved here instead of deleted. Never delete from vault.
+- \`wiki/\` — your output. You own these files. Humans read them.
+  - \`wiki/index.md\` — catalog of every page, one line each
+  - \`wiki/log.md\` — append-only timeline (## [YYYY-MM-DD] <op> | <title>)
+  - \`wiki/entities/\` — one page per person, team, system, module
+  - \`wiki/topics/\` — one page per business topic (NPD, approval flow, invoice, etc.)
+  - \`wiki/summaries/\` — one summary page per ingested source
 
-## Scope — What Claude should NOT do
-- Never modify BRD files without explicit instruction
-- Never create new .md files unless asked
-- Always cite which source file the answer comes from
+## Operations
 
-## Team Contacts (for context only)
-- QA Lead: [your-name]@readyms.com
-- Dev: [dev-name]@bigc.co.th`}</CodeBlock>
+### INGEST (when user says "ingest <source>" or drops a file)
+1. If source file is outside raw/, copy it from its given path into the appropriate
+   raw/ subfolder first. Never skip this step.
+2. Read the source completely.
+3. Discuss 3-5 key takeaways with the user. Wait for confirmation.
+4. Write \`wiki/summaries/<source-slug>.md\` — a 200-400 word summary,
+   YAML frontmatter (date, source, tags), wikilinks to entities/topics.
+5. Update relevant \`wiki/entities/<entity>.md\` pages (create if new).
+6. Update relevant \`wiki/topics/<topic>.md\` pages (create if new).
+7. If new info contradicts an existing page, ADD a "Δ Contradiction" section
+   on the topic page citing both sources. Do not silently overwrite.
+8. Append entry to \`wiki/log.md\` (## [YYYY-MM-DD] ingest | <title>).
+9. Update \`wiki/index.md\` with the new pages.
+
+### QUERY (when user asks a question)
+1. Read \`wiki/index.md\` first to find relevant pages.
+2. Read those pages. Synthesize an answer.
+3. Always include \`[[wikilinks]]\` to the pages you used as citations.
+4. If the answer is novel and likely to be re-asked, offer to file it as
+   a new page in \`wiki/topics/\` or \`wiki/analyses/\`.
+
+### LINT (when user says "lint" or "health-check")
+Check the wiki for: orphan pages (no inbound links), stale claims,
+unflagged contradictions, missing cross-references, important concepts
+mentioned but lacking their own page. Report findings; do not auto-fix.
+
+## Conventions
+
+- All dates: YYYY-MM-DD.
+- Filenames: kebab-case, lowercase.
+- Wikilinks always: \`[[entity-name]]\` or \`[[topics/npd-approval]]\`.
+- YAML frontmatter on every wiki page:
+  \`\`\`yaml
+  ---
+  type: entity | topic | summary | analysis
+  tags: [s4, <relevant>]
+  updated: YYYY-MM-DD
+  sources: [list of raw/ paths]
+  ---
+  \`\`\`
+- Language: write in **English**. Quote Thai/local terms verbatim when
+  they appear in sources, in parentheses.
+- Tone: factual, concise. Use bullet points over prose where possible.
+
+## File ownership (DO NOT VIOLATE)
+
+- \`raw/**\` — human-owned, immutable. Never edit.
+- \`wiki/**\` — LLM-owned. Humans read only.
+- \`CLAUDE.md\` — co-owned. Discuss changes before editing.
+
+## When unsure
+
+Ask the user. Don't guess about the S4 domain. Don't fabricate stakeholders.
+If a source is ambiguous, surface the ambiguity in the summary.`}</CodeBlock>
 
     <Callout kind="tip" icon="💡">
       <div>
@@ -2197,6 +2417,7 @@ const Page = () => (
     <S_Cheatsheet/>
     <S_GitHub/>
     <S09/>
+    <S_PowerAutomate/>
     <S_NextActions/>
     <div style={{marginTop:60,padding:"30px 0",borderTop:"1px dashed var(--border-strong)",textAlign:"center",color:"var(--muted)",fontSize:13}}>
       <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:16,color:"var(--ink)",marginBottom:6}}>
