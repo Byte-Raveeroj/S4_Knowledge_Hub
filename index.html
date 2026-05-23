@@ -477,16 +477,21 @@ const S02 = () => (
     {/* ── 3-Lane Install Tracks ── */}
     {(() => {
       const LANE_STEP = ({num,text}) => (
-        <div style={{display:"flex",alignItems:"flex-start",gap:8,marginBottom:6}}>
-          <div style={{width:20,height:20,borderRadius:"50%",background:"rgba(0,0,0,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:700,flexShrink:0,marginTop:1}}>{num}</div>
-          <div style={{fontSize:12,color:"#374151",lineHeight:1.5}}>{text}</div>
+        <div style={{display:"flex",alignItems:"flex-start",gap:10,marginBottom:8}}>
+          <div style={{width:24,height:24,borderRadius:"50%",background:"rgba(0,0,0,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,flexShrink:0,marginTop:1}}>{num}</div>
+          <div style={{fontSize:14,color:"#1F2937",lineHeight:1.55,fontFamily:"var(--font-body)"}}>{text}</div>
         </div>
       );
-      const LANE_VERIFY = ({color,cmd}) => (
+      const LANE_VERIFY = ({color,cmd,isVisual,verifyLink}) => (
         <div style={{marginTop:"auto",paddingTop:10,borderTop:"1px dashed rgba(0,0,0,0.1)"}}>
-          <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.06em",color,marginBottom:4,textTransform:"uppercase"}}>✅ ตรวจสอบ</div>
-          <code style={{fontFamily:"var(--font-mono)",fontSize:12,background:"rgba(0,0,0,0.06)",padding:"3px 8px",borderRadius:6,display:"block"}}>{cmd}</code>
-          <div style={{fontSize:10,color:"#6B7280",marginTop:3}}>รันใน Terminal — ถ้าเห็น version = พร้อม</div>
+          <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.06em",color,marginBottom:5,textTransform:"uppercase"}}>✅ ตรวจสอบ</div>
+          {verifyLink
+            ? <a href={verifyLink} onClick={e=>{e.preventDefault();document.getElementById(verifyLink.replace('#',''))?.scrollIntoView({behavior:'smooth'})}} style={{display:"block",textDecoration:"none",fontFamily:"var(--font-body)",fontSize:13,background:"rgba(0,0,0,0.06)",padding:"5px 10px",borderRadius:6,color,cursor:"pointer"}}>
+                {cmd} <span style={{fontSize:11,opacity:0.7}}>↓ ดูโครงสร้าง</span>
+              </a>
+            : <div style={{fontFamily:isVisual?"var(--font-body)":"var(--font-mono)",fontSize:13,background:"rgba(0,0,0,0.06)",padding:"5px 10px",borderRadius:6,color:isVisual?color:"inherit"}}>{cmd}</div>
+          }
+          <div style={{fontSize:12,color:"#6B7280",marginTop:4}}>{isVisual?"เห็นใน Obsidian = พร้อม · คลิกดูโครงสร้างแนะนำ":"รันใน Terminal — ถ้าเห็น version = พร้อม"}</div>
         </div>
       );
       const lanes = [
@@ -501,7 +506,7 @@ const S02 = () => (
             {num:2, text:'เปิดแอป → Open Folder → ชี้ไปที่ BigC-IM-Wiki บน OneDrive'},
             {num:3, text:"เห็นไฟล์ .md ในแถบซ้าย = พร้อมแล้ว"},
           ],
-          verify:null,
+          verify:{color:"#7C3AED", cmd:"vault panel แสดงไฟล์ .md ครบ", isVisual:true, verifyLink:"#vault-structure"},
           foot:null,
         },
         {
@@ -553,20 +558,20 @@ const S02 = () => (
                   <span style={{fontSize:10,background:lane.badgeBg,color:lane.badgeColor,padding:"2px 7px",borderRadius:4,fontWeight:700}}>{lane.badge}</span>
                 </div>
                 {/* Download link */}
-                <a href={lane.link} target="_blank" style={{textDecoration:"none",display:"block",padding:"10px 14px",background:lane.colorSoft,borderBottom:`1px solid ${lane.colorBorder}`}}>
-                  <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <a href={lane.link} target="_blank" style={{textDecoration:"none",display:"flex",alignItems:"center",padding:"10px 14px",background:lane.colorSoft,borderBottom:`1px solid ${lane.colorBorder}`,minHeight:90}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8,height:"100%"}}>
                     <div style={{flex:1,minWidth:0}}>
-                      <div style={{fontSize:12,fontWeight:600,color:"#1F2937",marginBottom:1}}>{lane.name}</div>
-                      <div style={{fontSize:11,color:"#6B7280"}}>{lane.desc}</div>
+                      <div style={{fontSize:14,fontWeight:700,color:"#1F2937",marginBottom:2,fontFamily:"var(--font-display)"}}>{lane.name}</div>
+                      <div style={{fontSize:12,color:"#6B7280"}}>{lane.desc}</div>
                     </div>
-                    <span style={{fontSize:13,color:lane.color,fontWeight:700,flexShrink:0}}>↗ ดาวน์โหลด</span>
+                    <span style={{fontSize:13,color:lane.color,fontWeight:700,flexShrink:0,whiteSpace:"nowrap"}}>↗ ดาวน์โหลด</span>
                   </div>
                 </a>
                 {/* Steps */}
                 <div style={{padding:"12px 14px",background:"#fff",flex:1,display:"flex",flexDirection:"column"}}>
-                  <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.06em",color:lane.color,marginBottom:8,textTransform:"uppercase"}}>ขั้นตอน</div>
+                  <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.06em",color:lane.color,marginBottom:10,textTransform:"uppercase"}}>ขั้นตอน</div>
                   {lane.steps.map(s => <LANE_STEP key={s.num} num={s.num} text={s.text}/>)}
-                  {lane.verify && <LANE_VERIFY color={lane.verify.color} cmd={lane.verify.cmd}/>}
+                  {lane.verify && <LANE_VERIFY color={lane.verify.color} cmd={lane.verify.cmd} isVisual={lane.verify.isVisual} verifyLink={lane.verify.verifyLink}/>}
                 </div>
               </div>
             ))}
@@ -588,6 +593,62 @@ claude`}</CodeBlock>
       );
     })()}
 
+    {/* ── Vault Structure ── */}
+    <div id="vault-structure" style={{marginTop:24,scrollMarginTop:80}}>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+        <div style={{width:3,height:22,borderRadius:2,background:"#7C3AED"}}/>
+        <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:15,color:"#7C3AED"}}>📁 โครงสร้าง BigC-IM-Wiki ที่แนะนำ</div>
+        <div style={{fontSize:11,background:"#EDE9FE",color:"#5B21B6",padding:"2px 8px",borderRadius:20,fontWeight:700}}>Obsidian Vault</div>
+      </div>
+      <div style={{background:"#1E1B2E",borderRadius:14,padding:"16px 20px",fontFamily:"var(--font-mono)",fontSize:13,lineHeight:1.8,color:"#E2E8F0",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:"linear-gradient(90deg,#7C3AED,#A855F7,#C084FC)",borderRadius:"14px 14px 0 0"}}/>
+        <div style={{color:"#A78BFA",fontWeight:700,marginBottom:6}}>📂 BigC-IM-Wiki/</div>
+        {[
+          {indent:1, icon:"📄", name:"CLAUDE.md",       note:"context หลักของ project — Claude อ่านทุกครั้ง",  color:"#FCD34D"},
+          {indent:1, icon:"📄", name:"QA-Strategy.md",  note:"กลยุทธ์ QA + risk matrix",                      color:"#86EFAC"},
+          {indent:1, icon:"📄", name:"Field-Catalog.md",note:"340 fields + conditional rules",                 color:"#86EFAC"},
+          {indent:1, icon:"📂", name:"01_Approval-Flow/",note:"",                                              color:"#93C5FD", isDir:true},
+          {indent:2, icon:"📄", name:"flow-diagram.md",  note:"approval lanes, SLA, routing",                  color:"#E2E8F0"},
+          {indent:2, icon:"📄", name:"open-questions.md",note:"คำถามรอ PO/Dev ตอบ",                            color:"#E2E8F0"},
+          {indent:1, icon:"📂", name:"02_BRD/",          note:"",                                              color:"#93C5FD", isDir:true},
+          {indent:2, icon:"📄", name:"BRD-summary.md",   note:"สรุป BRD Phase 1 NPD",                         color:"#E2E8F0"},
+          {indent:2, icon:"📄", name:"scope-decisions.md",note:"in-scope / out-of-scope decisions",            color:"#E2E8F0"},
+          {indent:1, icon:"📂", name:"03_QA/",           note:"",                                              color:"#93C5FD", isDir:true},
+          {indent:2, icon:"📄", name:"TC-summary.md",    note:"TC count, status, gaps",                        color:"#E2E8F0"},
+          {indent:2, icon:"📄", name:"TC-gaps.md",       note:"coverage gaps + next TC queue",                 color:"#E2E8F0"},
+          {indent:1, icon:"📂", name:"04_Sessions/",     note:"",                                              color:"#93C5FD", isDir:true},
+          {indent:2, icon:"📄", name:"2026-05-23.md",    note:"วันนี้ — session notes",                        color:"#E2E8F0"},
+          {indent:2, icon:"📄", name:"_template.md",     note:"copy ก่อนทำ session ใหม่",                      color:"#94A3B8"},
+          {indent:1, icon:"📂", name:"05_Dev-Snapshots/",note:"",                                              color:"#93C5FD", isDir:true},
+          {indent:2, icon:"📄", name:"dev-21-May.md",    note:"diff + key changes",                            color:"#E2E8F0"},
+          {indent:1, icon:"📂", name:"06_References/",   note:"",                                              color:"#93C5FD", isDir:true},
+          {indent:2, icon:"📄", name:"role-matrix.md",   note:"11 roles × permissions",                        color:"#E2E8F0"},
+          {indent:2, icon:"📄", name:"glossary.md",      note:"คำศัพท์ + abbreviations",                       color:"#E2E8F0"},
+        ].map((row,i) => (
+          <div key={i} style={{display:"flex",alignItems:"baseline",paddingLeft:(row.indent-1)*20}}>
+            <span style={{color:"#4B5563",marginRight:4,userSelect:"none"}}>{row.indent===1?"├─ ":"│  ├─ "}</span>
+            <span style={{marginRight:6}}>{row.icon}</span>
+            <span style={{color:row.color,fontWeight:row.isDir?700:400}}>{row.name}</span>
+            {row.note && <span style={{color:"#6B7280",fontSize:11,marginLeft:8}}>— {row.note}</span>}
+          </div>
+        ))}
+        <div style={{marginTop:8,paddingTop:8,borderTop:"1px dashed rgba(255,255,255,0.1)",color:"#6B7280",fontSize:11}}>
+          💡 CLAUDE.md บน root = context หลัก · โฟลเดอร์อื่นเพิ่มตามความต้องการทีม
+        </div>
+      </div>
+      <div style={{display:"flex",gap:10,marginTop:10,flexWrap:"wrap"}}>
+        {[
+          {emoji:"🟢",text:"ไฟล์ที่ Claude ควรอ่านทันที",bg:"#F0FDF4",border:"#86EFAC",color:"#15803D"},
+          {emoji:"🔵",text:"โฟลเดอร์ — เพิ่มตามโปรเจค",bg:"#EFF6FF",border:"#BFDBFE",color:"#1D4ED8"},
+          {emoji:"🟡",text:"ไฟล์สำคัญ — Claude ใช้เป็น memory",bg:"#FFFBEB",border:"#FCD34D",color:"#92400E"},
+        ].map((tag,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:11,padding:"3px 10px",borderRadius:20,background:tag.bg,border:`1px solid ${tag.border}`,color:tag.color}}>
+            <span>{tag.emoji}</span><span>{tag.text}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
     <Callout kind="warn" icon="⚠">
       <div><strong>OneDrive: ต้อง "Always keep on this device" ก่อน</strong> — คลิกขวา BigC-IM-Wiki ใน File Explorer → <strong>Always keep on this device</strong> · ถ้าเป็น cloud-only (ไอคอนเมฆ) Claude อ่านไฟล์ไม่เห็น</div>
     </Callout>
@@ -607,42 +668,6 @@ claude`}</CodeBlock>
             <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:12,color:"var(--primary)",marginBottom:4}}>{p.name}</div>
             <p style={{fontSize:11,margin:0,color:"#4B5563"}}>{p.desc}</p>
           </div>
-        ))}
-      </div>
-    </div>
-
-    {/* ── Pre-flight Checklist ── */}
-    <div style={{marginTop:20,borderRadius:14,border:"1.5px solid #A8D88A",overflow:"hidden"}}>
-      <div style={{background:"#3C8C1E",padding:"12px 20px",display:"flex",alignItems:"center",gap:10}}>
-        <span style={{fontSize:18}}>✅</span>
-        <span style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:15,color:"#fff"}}>Pre-flight Checklist — พร้อมไปต่อหรือยัง?</span>
-        <span style={{marginLeft:"auto",fontSize:12,color:"rgba(255,255,255,0.75)"}}>ติ๊กครบทุกข้อก่อนไป Section 03</span>
-      </div>
-      <div style={{background:"#F6FDF0"}}>
-        {[
-          {icon:"🟣", text:"Obsidian ติดตั้งแล้ว และเปิด vault ได้"},
-          {icon:"☁️", text:"BigC-IM-Wiki อยู่บน OneDrive และ sync ลงเครื่องแล้ว"},
-          {icon:"📁", text:'File Explorer เห็นไฟล์ใน BigC-IM-Wiki (ไอคอน ✓ ไม่ใช่เมฆ)'},
-          {icon:"🤖", text:'claude --version แสดง version ใน Terminal (Path 1: ผ่าน Desktop · Path 2: ผ่าน CLI)'},
-          {icon:"🔑", text:'claude ทำงานได้ใน Terminal — ถาม/ตอบได้ = ล็อกอินแล้ว'},
-        ].map((item,i,arr) => (
-          <label key={i} style={{
-            display:"flex",alignItems:"center",gap:14,
-            padding:"13px 20px",cursor:"pointer",
-            borderBottom: i<arr.length-1 ? "1px solid #DCF0CC" : "none",
-            background:"transparent",
-            transition:"background 0.15s",
-          }}
-          onMouseEnter={e=>e.currentTarget.style.background="#EBF7D4"}
-          onMouseLeave={e=>e.currentTarget.style.background="transparent"}
-          >
-            <input type="checkbox" style={{
-              width:20,height:20,flexShrink:0,
-              accentColor:"#3C8C1E",cursor:"pointer",
-            }}/>
-            <span style={{fontSize:20,flexShrink:0}}>{item.icon}</span>
-            <span style={{fontSize:14,color:"#1F2937",fontFamily:"var(--font-thai)",lineHeight:1.5}}>{item.text}</span>
-          </label>
         ))}
       </div>
     </div>
@@ -1267,13 +1292,15 @@ const S03 = () => (
           <Callout kind="info" icon="ℹ">
             <div>path ที่ sync ลงมาจะเป็นแบบนี้: <code className="inline">C:\Users\[your-name]\OneDrive - Big C\BigC-IM-Wiki\</code><br/>(ชื่อ OneDrive folder อาจต่างกันเล็กน้อยตาม M365 tenant ของบริษัท)</div>
           </Callout>
-          <Callout kind="warn" icon="⚠">
-            <div><strong>"Always keep on this device"</strong> จะปรากฏเฉพาะ folder ที่ sync มาจาก OneDrive เท่านั้น — ถ้าเป็น folder ปกติบนเครื่อง (ไม่ได้ sync จาก OneDrive) จะไม่มีตัวเลือกนี้ในเมนูขวา</div>
-          </Callout>
+          <div style={{display:"flex",gap:10,alignItems:"flex-start",padding:"10px 14px",background:"#F9FAFB",borderRadius:10,border:"1px solid #E5E7EB",marginBottom:8}}>
+            <span style={{fontSize:14,flexShrink:0,marginTop:1}}>ℹ️</span>
+            <div style={{fontSize:13,color:"#374151",lineHeight:1.55}}><strong style={{color:"#1F2937"}}>"Always keep on this device"</strong> จะปรากฏเฉพาะ folder ที่ sync มาจาก OneDrive เท่านั้น — folder ปกติบนเครื่องจะไม่มีตัวเลือกนี้</div>
+          </div>
           <AnimStep1/>
-          <Callout kind="warn" icon="⚠">
-            <div><strong>Error 0x8004016c</strong> — ถ้าเจอหน้า "Back up folders on this PC" พร้อม error นี้ → กด <strong>"Next"</strong> ผ่านได้เลย ไม่ต้องกด Try again. Error นี้ = IT Admin บริษัทปิด policy folder backup — ไม่กระทบ SharePoint Sync เลยแม้แต่น้อย</div>
-          </Callout>
+          <div style={{display:"flex",gap:10,alignItems:"flex-start",padding:"10px 14px",background:"#F9FAFB",borderRadius:10,border:"1px solid #E5E7EB",marginTop:8}}>
+            <span style={{fontSize:14,flexShrink:0,marginTop:1}}>💬</span>
+            <div style={{fontSize:13,color:"#374151",lineHeight:1.55}}><strong style={{color:"#1F2937"}}>เจอ Error 0x8004016c?</strong> กด <strong>"Next"</strong> ผ่านได้เลย — เป็นแค่ policy ของ IT Admin ปิด folder backup ไว้ ไม่กระทบ SharePoint Sync แต่อย่างใด</div>
+          </div>
         </div>
       </div>
       <div className="step">
