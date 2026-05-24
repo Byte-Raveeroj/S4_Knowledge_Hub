@@ -328,20 +328,21 @@ NAV.push(
   {id:"overview",      num:"00",label:"Overview",        labelTh:"ภาพรวมระบบ",            group:"แนะนำ"},
   {id:"way-of-work",   num:"01",label:"Way of Work",     labelTh:"ทำไมถึงเลือกแบบนี้",     group:"แนะนำ"},
   {id:"quickstart",    num:"02",label:"Quick Start",     labelTh:"ติดตั้ง Claude Code",     group:"Setup"},
-  {id:"setup",         num:"03",label:"Team Setup",      labelTh:"ขั้นตอนสำหรับทีม",       group:"Setup"},
-  {id:"claude-md",     num:"✦", label:"CLAUDE.md",       labelTh:"scope · ประหยัด token",   group:"Setup"},
-  {id:"flow-init",     num:"04",label:"Flow 1 · Init",   labelTh:"Initial Setup",         group:"Flows"},
-  {id:"flow-po",       num:"05",label:"Flow 2 · PO",     labelTh:"วางไฟล์ → ทุกคนเห็น",   group:"Flows"},
-  {id:"flow-local",    num:"06",label:"Flow 3 · Local",  labelTh:"แก้ .md → sync",        group:"Flows"},
-  {id:"flow-notion",   num:"07",label:"Flow 4 · Notion", labelTh:"Notion → GitHub Actions",group:"Flows"},
-  {id:"flow-all",      num:"08",label:"Flow 5 · All",    labelTh:"ภาพรวมทั้งหมด",        group:"Flows"},
-  {id:"use-convert",   num:"09",label:"Convert Files",   labelTh:"แปลง PDF/Word → MD",    group:"USE"},
-  {id:"use-ops",       num:"10",label:"3 Operations",    labelTh:"Ingest · Query · Lint",  group:"USE"},
-  {id:"use-prompts",   num:"11",label:"Cheat Sheet",     labelTh:"โพรมต์พร้อมใช้ 23+",     group:"USE"},
-  {id:"github",        num:"12",label:"GitHub Actions",  labelTh:"Notion Polling (Advanced)",group:"Advanced"},
-  {id:"faq",           num:"13",label:"FAQ",             labelTh:"คำถามพบบ่อย",           group:"Reference"},
-  {id:"power-automate",num:"14",label:"Power Automate",  labelTh:"Auto-sync ทุกไฟล์ใหม่", group:"Reference"},
-  {id:"next-actions",  num:"15",label:"Next Actions",    labelTh:"ขยายต่อในอนาคต",        group:"Reference"},
+  {id:"admin-setup",   num:"03", label:"Admin Setup",     labelTh:"ตั้งค่าสำหรับ Admin",    group:"Setup"},
+  {id:"joiner-setup",  num:"04", label:"New Joiner Setup",labelTh:"สมาชิกใหม่",             group:"Setup"},
+  {id:"claude-md",     num:"05", label:"CLAUDE.md",       labelTh:"scope · ประหยัด token",   group:"Setup"},
+  {id:"flow-init",     num:"06", label:"Flow 1 · Init",   labelTh:"Initial Setup",         group:"Flows"},
+  {id:"flow-po",       num:"07", label:"Flow 2 · PO",     labelTh:"วางไฟล์ → ทุกคนเห็น",   group:"Flows"},
+  {id:"flow-local",    num:"08", label:"Flow 3 · Local",  labelTh:"แก้ .md → sync",        group:"Flows"},
+  {id:"flow-notion",   num:"09", label:"Flow 4 · Notion", labelTh:"Notion → GitHub Actions",group:"Flows"},
+  {id:"flow-all",      num:"10", label:"Flow 5 · All",    labelTh:"ภาพรวมทั้งหมด",        group:"Flows"},
+  {id:"use-convert",   num:"11", label:"Convert Files",   labelTh:"แปลง PDF/Word → MD",    group:"USE"},
+  {id:"use-ops",       num:"12", label:"3 Operations",    labelTh:"Ingest · Query · Lint",  group:"USE"},
+  {id:"use-prompts",   num:"13", label:"Cheat Sheet",     labelTh:"โพรมต์พร้อมใช้ 23+",     group:"USE"},
+  {id:"github",        num:"14", label:"GitHub Actions",  labelTh:"Notion Polling (Advanced)",group:"Advanced"},
+  {id:"faq",           num:"15", label:"FAQ",             labelTh:"คำถามพบบ่อย",           group:"Reference"},
+  {id:"power-automate",num:"16", label:"Power Automate",  labelTh:"Auto-sync ทุกไฟล์ใหม่", group:"Reference"},
+  {id:"next-actions",  num:"17", label:"Next Actions",    labelTh:"ขยายต่อในอนาคต",        group:"Reference"},
 );
 
 /* ── 00 Overview ── */
@@ -392,6 +393,29 @@ const S01 = () => (
     subtitle={<><strong>Free · Auto-detect · No server</strong> — จุดสมดุลที่คุ้มที่สุดระหว่าง manual กับ full-automation</>}
     thai={<>ฟรี · ตรวจหาไฟล์ใหม่เอง · ไม่ต้องมี server · ไม่ต้อง implement เพิ่ม</>}
   >
+    {/* ── KEY OBJECTIVES ── */}
+    <div style={{marginBottom:24}}>
+      <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:15,color:"var(--ink)",marginBottom:14}}>🎯 เป้าหมายที่ต้องการ</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+        {[
+          {icon:"🗂",title:"Single source of truth",desc:"ทุกคนในทีมอ่านไฟล์จากแหล่งเดียวกัน — ไม่มีเวอร์ชันหลายชุดกระจายใน chat"},
+          {icon:"🔄",title:"อัพเดทถึงทุกคนอัตโนมัติ",desc:"ใครวางไฟล์ใหม่ใน General → ทุกเครื่องได้ไฟล์ล่าสุดทันที ไม่ต้องส่งซ้ำ"},
+          {icon:"🤖",title:"Claude สรุปให้เมื่อมีอัพเดท",desc:"วาง BRD ใหม่ แล้วถาม Claude ว่าต่างจากเดิมยังไง — ได้คำตอบทันทีโดยไม่ต้องอ่านเอง"},
+          {icon:"📚",title:"Personal knowledge library",desc:"แต่ละคนมี Obsidian vault ที่ sync กัน — browse, link, search ไฟล์ทีมได้ในแบบของตัวเอง"},
+          {icon:"📜",title:"ประวัติชัดเจน ย้อนดูได้",desc:"wiki/log.md บันทึกทุก ingest — รู้ว่าใครเพิ่มอะไร เมื่อไหร่ และมีการเปลี่ยนแปลงอะไรบ้าง"},
+          {icon:"🚀",title:"Onboard สมาชิกใหม่เร็วขึ้น",desc:"ถาม Claude ว่า 'สรุปโปรเจกต์นี้ให้หน่อย' — ได้ context ครบจาก wiki โดยไม่ต้องนั่งถ่ายทอดซ้ำ"},
+        ].map((o,i)=>(
+          <div key={i} style={{display:"flex",gap:10,padding:"12px 14px",background:"var(--surface)",border:"1px solid var(--border)",borderRadius:10}}>
+            <span style={{fontSize:20,flexShrink:0,lineHeight:1.3}}>{o.icon}</span>
+            <div>
+              <div style={{fontFamily:"var(--font-display)",fontWeight:600,fontSize:13,color:"var(--ink)",marginBottom:3}}>{o.title}</div>
+              <div style={{fontSize:12,color:"var(--ink-2)",lineHeight:1.55}}>{o.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
     <div style={{background:"var(--surface)",border:"2px solid var(--primary)",borderRadius:"var(--radius-xl)",padding:"24px 28px",margin:"20px 0",boxShadow:"var(--shadow-sm)"}}>
       <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20}}>
         <div style={{width:48,height:48,borderRadius:14,background:"var(--primary)",display:"grid",placeItems:"center",fontSize:24,flexShrink:0}}>⭐</div>
@@ -1258,26 +1282,53 @@ function AnimClaudeCode() {
   );
 }
 
-/* ── 03 Team Setup ── */
-const S03 = () => (
-  <Section id="setup" eyebrow="03 · Setup" eyebrowKind="green"
-    title="Team Setup"
-    subtitle={<>2 tracks · <strong>🔧 Creator</strong> ทำครั้งเดียวก่อนให้ทีม · <strong>👥 Joiner</strong> ทุกคนทำบนเครื่องตัวเอง</>}
-    thai={<>Creator = คนแรกที่ตั้ง vault (ทำครั้งเดียว) · Joiner = สมาชิกทีมทุกคนที่ต่อเข้ามาใหม่</>}
+/* ── 03a Admin Setup ── */
+const S03a = () => (
+  <Section id="admin-setup" eyebrow="03 · Admin Setup" eyebrowKind="green"
+    title="Admin Setup — ตั้งค่าสำหรับ Admin"
+    subtitle={<>ทำครั้งเดียวก่อนให้ทีม · <strong>5 ขั้นตอน</strong> · Admin หรือคนแรกของทีมเป็นคนทำ</>}
+    thai={<>ทำเพียงครั้งเดียว — สมาชิกคนอื่นไม่ต้องทำซ้ำ</>}
   >
+    {/* ── KEY OBJECTIVES ── */}
+    <div style={{marginBottom:28}}>
+      <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:15,color:"var(--ink)",marginBottom:14}}>🎯 ทำไมต้อง setup สิ่งนี้?</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+        {[
+          {icon:"🗂",title:"Single source of truth",desc:"ทุกคนในทีมอ่านไฟล์จากแหล่งเดียวกัน — ไม่มีเวอร์ชันหลายชุดกระจายใน chat"},
+          {icon:"🔄",title:"อัพเดทถึงทุกคนอัตโนมัติ",desc:"ใครวางไฟล์ใหม่ใน General → ทุกเครื่องได้ไฟล์ล่าสุดทันที ไม่ต้องส่งซ้ำ"},
+          {icon:"🤖",title:"Claude สรุปให้เมื่อมีอัพเดท",desc:"วาง BRD ใหม่ แล้วถาม Claude ว่าต่างจากเดิมยังไง — ได้คำตอบทันทีโดยไม่ต้องอ่านเอง"},
+          {icon:"📚",title:"Personal knowledge library",desc:"แต่ละคนมี Obsidian vault ที่ sync กัน — browse, link, search ไฟล์ทีมได้ในแบบของตัวเอง"},
+          {icon:"📜",title:"ประวัติชัดเจน ย้อนดูได้",desc:"wiki/log.md บันทึกทุก ingest — รู้ว่าใครเพิ่มอะไร เมื่อไหร่ และมีการเปลี่ยนแปลงอะไรบ้าง"},
+          {icon:"🚀",title:"Onboard สมาชิกใหม่เร็วขึ้น",desc:"ถาม Claude ว่า 'สรุปโปรเจกต์นี้ให้หน่อย' — ได้ context ครบจาก wiki โดยไม่ต้องนั่งถ่ายทอดซ้ำ"},
+        ].map((o,i)=>(
+          <div key={i} style={{display:"flex",gap:10,padding:"12px 14px",background:"var(--surface)",border:"1px solid var(--border)",borderRadius:10}}>
+            <span style={{fontSize:20,flexShrink:0,lineHeight:1.3}}>{o.icon}</span>
+            <div>
+              <div style={{fontFamily:"var(--font-display)",fontWeight:600,fontSize:13,color:"var(--ink)",marginBottom:3}}>{o.title}</div>
+              <div style={{fontSize:12,color:"var(--ink-2)",lineHeight:1.55}}>{o.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
     {/* ── DELETION WARNING ── */}
     <div style={{background:"#FEF2F2",border:"2px solid #DC2626",borderRadius:12,padding:"14px 18px",marginBottom:24,display:"flex",gap:12,alignItems:"flex-start"}}>
       <span style={{fontSize:22,flexShrink:0,lineHeight:1}}>🚨</span>
       <div>
         <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:14,color:"#B91C1C",marginBottom:4}}>ห้ามลบไฟล์หรือ folder จาก vault บนเครื่อง local เด็ดขาด</div>
         <div style={{fontSize:13,color:"#7F1D1D",lineHeight:1.6}}>
-          <strong style={{color:"#B91C1C"}}>ลบ local = ลบ OneDrive = ลบเครื่องทุกคนในทีมทันที</strong> · ถ้าต้องการ "เก็บออก" → ย้ายไปที่ <code style={{background:"#FEE2E2",padding:"1px 5px",borderRadius:4,fontSize:12}}>raw/_archive/</code> แทน ห้ามกด Delete · ถ้าเผลอลบ → ติดต่อ <strong>Raveeroj</strong> (raveeroj.thiensiripipat@readyms.com) — กู้คืนได้จาก SharePoint Recycle Bin ภายใน 93 วัน
+          <strong style={{color:"#B91C1C"}}>ลบ local = ลบ OneDrive = ลบเครื่องทุกคนในทีมทันที</strong> · ถ้าต้องการ "เก็บออก" → ย้ายไปที่ <code style={{background:"#FEE2E2",padding:"1px 5px",borderRadius:4,fontSize:12}}>raw/_archive/</code> แทน ห้ามกด Delete · ถ้าเผลอลบ → ติดต่อ <strong>IT Admin</strong> — กู้คืนได้จาก SharePoint Recycle Bin ภายใน 93 วัน
         </div>
       </div>
     </div>
 
     {/* ── CREATOR TRACK ── */}
     <div style={{marginBottom:36}}>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16,padding:"10px 16px",background:"#FFF7ED",border:"1.5px solid #F97316",borderRadius:10}}>
+        <span style={{fontSize:20}}>🔧</span>
+        <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:15,color:"#C2410C"}}>Creator Track — ทำครั้งเดียว (Admin / คนแรก)</div>
+      </div>
       <div className="steps">
         <div className="step">
           <div className="step-num amber">1</div>
@@ -1346,13 +1397,23 @@ Then create wiki/index.md and wiki/log.md with starter content.`}</CodeBlock>
       </div>
     </div>
 
-    {/* ── JOINER TRACK ── */}
+  </Section>
+);
+
+/* ── 03b New Joiner Setup ── */
+const S03b = () => (
+  <Section id="joiner-setup" eyebrow="04 · New Joiner" eyebrowKind="tip"
+    title="New Joiner Setup — สมาชิกใหม่"
+    subtitle={<>ทำหลัง Admin ตั้ง vault เสร็จแล้ว · <strong>~5 นาที/คน</strong> · ทีมทุกคนทำบนเครื่องตัวเอง</>}
+    thai={<>ทำหลัง Admin Setup เสร็จแล้วเท่านั้น — S4-Wiki จะมีไฟล์พร้อมให้ sync</>}
+  >
     <div>
-      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16,padding:"10px 16px",background:"#F0FDF4",border:"1.5px solid #22C55E",borderRadius:10}}>
-        <span style={{fontSize:20}}>👥</span>
-        <div>
-          <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:15,color:"#15803D"}}>Joiner Track — ทีมทุกคนทำบนเครื่องตัวเอง</div>
-          <div style={{fontSize:12,color:"#166534",marginTop:2}}>ทำหลัง Creator ตั้ง vault เสร็จแล้ว · ~5 นาที/คน</div>
+
+      {/* ── NOTE: ไม่ต้องวาง CLAUDE.md ── */}
+      <div style={{display:"flex",gap:10,alignItems:"flex-start",padding:"10px 14px",background:"var(--primary-soft)",border:"1px solid var(--border)",borderRadius:10,marginBottom:16}}>
+        <span style={{fontSize:16,flexShrink:0}}>✅</span>
+        <div style={{fontSize:13,color:"var(--ink-2)",lineHeight:1.55}}>
+          <strong style={{color:"var(--ink)"}}>ไม่ต้องวาง CLAUDE.md</strong> — Admin ได้วางไว้แล้วตอน Setup · เมื่อ OneDrive sync สำเร็จ CLAUDE.md จะอยู่ใน S4-Wiki ของคุณโดยอัตโนมัติ
         </div>
       </div>
 
@@ -2300,7 +2361,7 @@ const S_NextActions = () => (
 
 /* ── 11 CLAUDE.md — Vault Scope & Context ── */
 const S11 = () => (
-  <Section id="claude-md" eyebrow="✦ · CLAUDE.md" eyebrowKind="green"
+  <Section id="claude-md" eyebrow="05 · CLAUDE.md" eyebrowKind="green"
     title="CLAUDE.md — กำหนด scope ให้ Claude ก่อนถาม"
     subtitle={<>ไฟล์เดียวที่ทำให้ Claude Code <strong>รู้จักทีมและโปรเจกต์</strong> — ลด token · เพิ่มความแม่นยำ</>}
     thai={<>วาง CLAUDE.md ไว้ที่ root ของ vault — Claude อ่านอัตโนมัติทุกครั้งที่เปิด session ใหม่</>}
@@ -2513,7 +2574,8 @@ const Page = () => (
     <S00/>
     <S01/>
     <S02/>
-    <S03/>
+    <S03a/>
+    <S03b/>
     <S11/>
     <S04/>
     <S05/>
