@@ -2,47 +2,79 @@ name: Notion Change Notify
 
 on:
   schedule:
-    - cron: '0,30 1-12 * * 1-5'
+    - cron: '*/30 1-12 * * 1-5'
   workflow_dispatch:
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Check Notion databases for recent edits
+      - name: Check Notion databases and notify Teams
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           DB_IDS: ${{ secrets.NOTION_DATABASE_IDS }}
           TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK_URL }}
         run: |
-          SINCE=$(date -u -d '31 minutes ago' '+%Y-%m-%dT%H:%M:%SZ')
+          SINCE=$(date -u -d '31 minutes ago' +%Y-%m-%dT%H:%M:%S.000Z)
           TOTAL=0
-          NAMES=""
+          ALL_NAMES=""
 
-          for DB_ID in $(echo $DB_IDS | tr ',' ' '); do
-            RESP=$(curl -s -X POST \
+          IFS=',' read -ra IDS <<< "$DB_IDS"
+          for DB_ID in "${IDS[@]}"; do
+            DB_ID=$(echo "$DB_ID" | xargs)
+            RESP=$(curl -sf -X POST \
               "https://api.notion.com/v1/databases/${DB_ID}/query" \
-              -H "Authorization: Bearer ${NOTION_TOKEN}" \
+              -H "Authorization: Bearer $NOTION_TOKEN" \
               -H "Notion-Version: 2022-06-28" \
               -H "Content-Type: application/json" \
-              -d "{\"filter\":{\"timestamp\":\"last_edited_time\",\"last_edited_time\":{\"after\":\"${SINCE}\"}}}")
+              -d "{\"filter\":{\"timestamp\":\"last_edited_time\",\"last_edited_time\":{\"after\":\"$SINCE\"}}}")  || continue
 
-            COUNT=$(echo "$RESP" | python3 -c \
-              "import sys,json; d=json.load(sys.stdin); print(len(d.get('results',[])))" 2>/dev/null || echo "0")
-
-            if [ "$COUNT" -gt "0" ]; then
+            NAMES=$(echo "$RESP" | python3 -c "
+import sys,json
+d=json.load(sys.stdin)
+for r in d.get('results',[]):
+    p=r.get('properties',{})
+    t=''
+    for v in p.values():
+        if v.get('type')=='title':
+            t=''.join(x.get('plain_text','') for x in v.get('title',[]))
+            break
+    print(t or 'Untitled')
+")
+            COUNT=$(echo "$NAMES" | grep -c .)
+            if [ "$COUNT" -gt 0 ] && [ -n "$NAMES" ]; then
               TOTAL=$((TOTAL + COUNT))
-              NEW=$(echo "$RESP" | python3 -c \
-                "import sys,json; d=json.load(sys.stdin);
-                 [print('•', r['properties'].get('Name', r['properties'].get('title', [{}]))[0].get('plain_text','—') if isinstance(r['properties'].get('Name', r['properties'].get('title',[])), list) else '—')
-                  for r in d['results']]" 2>/dev/null || echo "• $COUNT items")
-              NAMES="${NAMES}${NEW}\n"
+              ALL_NAMES="${ALL_NAMES}${NAMES}\n"
             fi
           done
 
-          if [ "$TOTAL" -gt "0" ]; then
-            MSG="$TOTAL รายการใน Notion อัพเดทแล้ว:\n${NAMES}\nรัน Claude: ingest notion pages ที่เปลี่ยนแปลง"
-            curl -s -X POST "${TEAMS_WEBHOOK}" \
-              -H "Content-Type: application/json" \
-              -d "{\"@type\":\"MessageCard\",\"themeColor\":\"5BA900\",\"title\":\"🔔 BigC IM Wiki\",\"text\":\"${MSG}\"}"
-          fi
+          [ "$TOTAL" -eq 0 ] && { echo "No changes."; exit 0; }
+
+          PAYLOAD=$(python3 -c "
+import json
+names_raw = '''$(echo -e "$ALL_NAMES")'''
+names = [n.strip() for n in names_raw.strip().split('\n') if n.strip()]
+total = len(names)
+facts = [{'type':'TextBlock','text':'• '+n,'wrap':True,'spacing':'None'} for n in names]
+card = {
+  'type':'message',
+  'attachments':[{
+    'contentType':'application/vnd.microsoft.card.adaptive',
+    'content':{
+      '\$schema':'http://adaptivecards.io/schemas/adaptive-card.json',
+      'type':'AdaptiveCard','version':'1.4',
+      'body':[
+        {'type':'TextBlock','text':'🔔 BigC IM Wiki อัพเดท','weight':'Bolder','size':'Large','color':'Accent'},
+        {'type':'TextBlock','text':f'พบ {total} หน้าที่แก้ไขใน 30 นาทีล่าสุด:','wrap':True}
+      ] + facts + [
+        {'type':'TextBlock','text':'👉 รัน Claude ingest เพื่ออัพเดท context','weight':'Bolder','color':'Warning','wrap':True}
+      ]
+    }
+  }]
+}
+print(json.dumps(card))
+")
+
+          curl -sf -X POST "$TEAMS_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" && echo "✅ Teams notified ($TOTAL pages)" || echo "❌ Teams notify failed"
