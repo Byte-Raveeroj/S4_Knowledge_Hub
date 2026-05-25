@@ -15,66 +15,100 @@ jobs:
           DB_IDS: ${{ secrets.NOTION_DATABASE_IDS }}
           TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK_URL }}
         run: |
-          SINCE=$(date -u -d '31 minutes ago' +%Y-%m-%dT%H:%M:%S.000Z)
-          TOTAL=0
-          ALL_NAMES=""
+          cat > /tmp/check_notion.py << 'PYEOF'
+          import os, json, urllib.request
+          from datetime import datetime, timezone, timedelta
 
-          IFS=',' read -ra IDS <<< "$DB_IDS"
-          for DB_ID in "${IDS[@]}"; do
-            DB_ID=$(echo "$DB_ID" | xargs)
-            RESP=$(curl -sf -X POST \
-              "https://api.notion.com/v1/databases/${DB_ID}/query" \
-              -H "Authorization: Bearer $NOTION_TOKEN" \
-              -H "Notion-Version: 2022-06-28" \
-              -H "Content-Type: application/json" \
-              -d "{\"filter\":{\"timestamp\":\"last_edited_time\",\"last_edited_time\":{\"after\":\"$SINCE\"}}}")  || continue
+          token   = os.environ['NOTION_TOKEN']
+          db_ids  = [d.strip() for d in os.environ['DB_IDS'].split(',')]
+          webhook = os.environ['TEAMS_WEBHOOK']
+          since   = (datetime.now(timezone.utc) - timedelta(minutes=31)).strftime('%Y-%m-%dT%H:%M:%S.000Z')
 
-            NAMES=$(echo "$RESP" | python3 -c "
-import sys,json
-d=json.load(sys.stdin)
-for r in d.get('results',[]):
-    p=r.get('properties',{})
-    t=''
-    for v in p.values():
-        if v.get('type')=='title':
-            t=''.join(x.get('plain_text','') for x in v.get('title',[]))
-            break
-    print(t or 'Untitled')
-")
-            COUNT=$(echo "$NAMES" | grep -c .)
-            if [ "$COUNT" -gt 0 ] && [ -n "$NAMES" ]; then
-              TOTAL=$((TOTAL + COUNT))
-              ALL_NAMES="${ALL_NAMES}${NAMES}\n"
-            fi
-          done
+          updated = []
+          for db_id in db_ids:
+              try:
+                  body = json.dumps({
+                      "filter": {
+                          "timestamp": "last_edited_time",
+                          "last_edited_time": {"after": since}
+                      }
+                  }).encode()
+                  req = urllib.request.Request(
+                      f'https://api.notion.com/v1/databases/{db_id}/query',
+                      data=body,
+                      headers={
+                          'Authorization': f'Bearer {token}',
+                          'Notion-Version': '2022-06-28',
+                          'Content-Type': 'application/json'
+                      },
+                      method='POST'
+                  )
+                  with urllib.request.urlopen(req) as r:
+                      data = json.loads(r.read())
+                  for page in data.get('results', []):
+                      title = ''
+                      for val in page.get('properties', {}).values():
+                          if val.get('type') == 'title':
+                              title = ''.join(t.get('plain_text','') for t in val.get('title',[]))
+                              break
+                      updated.append(title or 'Untitled')
+              except Exception as e:
+                  print(f'Skip {db_id}: {e}')
 
-          [ "$TOTAL" -eq 0 ] && { echo "No changes."; exit 0; }
+          if not updated:
+              print('No changes found.')
+              exit(0)
 
-          PAYLOAD=$(python3 -c "
-import json
-names_raw = '''$(echo -e "$ALL_NAMES")'''
-names = [n.strip() for n in names_raw.strip().split('\n') if n.strip()]
-total = len(names)
-facts = [{'type':'TextBlock','text':'• '+n,'wrap':True,'spacing':'None'} for n in names]
-card = {
-  'type':'message',
-  'attachments':[{
-    'contentType':'application/vnd.microsoft.card.adaptive',
-    'content':{
-      '\$schema':'http://adaptivecards.io/schemas/adaptive-card.json',
-      'type':'AdaptiveCard','version':'1.4',
-      'body':[
-        {'type':'TextBlock','text':'🔔 BigC IM Wiki อัพเดท','weight':'Bolder','size':'Large','color':'Accent'},
-        {'type':'TextBlock','text':f'พบ {total} หน้าที่แก้ไขใน 30 นาทีล่าสุด:','wrap':True}
-      ] + facts + [
-        {'type':'TextBlock','text':'👉 รัน Claude ingest เพื่ออัพเดท context','weight':'Bolder','color':'Warning','wrap':True}
-      ]
-    }
-  }]
-}
-print(json.dumps(card))
-")
+          facts = [
+              {'type':'TextBlock','text':f'• {n}','wrap':True,'spacing':'None'}
+              for n in updated
+          ]
+          card = {
+              'type': 'message',
+              'attachments': [{
+                  'contentType': 'application/vnd.microsoft.card.adaptive',
+                  'content': {
+                      '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+                      'type': 'AdaptiveCard',
+                      'version': '1.4',
+                      'body': [
+                          {
+                              'type': 'TextBlock',
+                              'text': '🔔 BigC IM Wiki อัพเดท',
+                              'weight': 'Bolder',
+                              'size': 'Large',
+                              'color': 'Accent'
+                          },
+                          {
+                              'type': 'TextBlock',
+                              'text': f'พบ {len(updated)} หน้าที่แก้ไขใน 30 นาทีล่าสุด:',
+                              'wrap': True
+                          }
+                      ] + facts + [
+                          {
+                              'type': 'TextBlock',
+                              'text': '👉 รัน Claude ingest เพื่ออัพเดท context',
+                              'weight': 'Bolder',
+                              'color': 'Warning',
+                              'wrap': True
+                          }
+                      ]
+                  }
+              }]
+          }
 
-          curl -sf -X POST "$TEAMS_WEBHOOK" \
-            -H "Content-Type: application/json" \
-            -d "$PAYLOAD" && echo "✅ Teams notified ($TOTAL pages)" || echo "❌ Teams notify failed"
+          payload = json.dumps(card).encode()
+          req = urllib.request.Request(
+              webhook,
+              data=payload,
+              headers={'Content-Type': 'application/json'},
+              method='POST'
+          )
+          try:
+              with urllib.request.urlopen(req) as r:
+                  print(f'Teams notified: {len(updated)} pages updated')
+          except Exception as e:
+              print(f'Teams error: {e}')
+              exit(1)
+          PYEOF
+          python3 /tmp/check_notion.py
