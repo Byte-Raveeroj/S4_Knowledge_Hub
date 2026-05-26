@@ -13,7 +13,7 @@ jobs:
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           DB_IDS: ${{ secrets.NOTION_DATABASE_IDS }}
-          TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          TEAMS_WEBHOOK: ${{ secrets.TEAMS_NOTION_WEBHOOK }}
         run: |
           cat > /tmp/check_notion.py << 'PYEOF'
           import os, json, urllib.request
