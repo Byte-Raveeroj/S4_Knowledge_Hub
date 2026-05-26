@@ -16,99 +16,271 @@ jobs:
           TEAMS_WEBHOOK: ${{ secrets.TEAMS_NOTION_WEBHOOK }}
         run: |
           cat > /tmp/check_notion.py << 'PYEOF'
-          import os, json, urllib.request
-          from datetime import datetime, timezone, timedelta
+import os, json, urllib.request
+from datetime import datetime, timezone, timedelta
 
-          token   = os.environ['NOTION_TOKEN']
-          db_ids  = [d.strip() for d in os.environ['DB_IDS'].split(',')]
-          webhook = os.environ['TEAMS_WEBHOOK']
-          since   = (datetime.now(timezone.utc) - timedelta(minutes=31)).strftime('%Y-%m-%dT%H:%M:%S.000Z')
+token   = os.environ['NOTION_TOKEN']
+db_ids  = [d.strip() for d in os.environ['DB_IDS'].replace('\n', ',').split(',') if d.strip()]
+webhook = os.environ['TEAMS_WEBHOOK']
+now     = datetime.now(timezone.utc)
+since   = (now - timedelta(minutes=31)).strftime('%Y-%m-%dT%H:%M:%S.000Z')
+ts_str  = (now + timedelta(hours=7)).strftime('%H:%M')  # ICT
 
-          updated = []
-          for db_id in db_ids:
-              try:
-                  body = json.dumps({
-                      "filter": {
-                          "timestamp": "last_edited_time",
-                          "last_edited_time": {"after": since}
-                      }
-                  }).encode()
-                  req = urllib.request.Request(
-                      f'https://api.notion.com/v1/databases/{db_id}/query',
-                      data=body,
-                      headers={
-                          'Authorization': f'Bearer {token}',
-                          'Notion-Version': '2022-06-28',
-                          'Content-Type': 'application/json'
-                      },
-                      method='POST'
-                  )
-                  with urllib.request.urlopen(req) as r:
-                      data = json.loads(r.read())
-                  for page in data.get('results', []):
-                      title = ''
-                      for val in page.get('properties', {}).values():
-                          if val.get('type') == 'title':
-                              title = ''.join(t.get('plain_text','') for t in val.get('title',[]))
-                              break
-                      updated.append(title or 'Untitled')
-              except Exception as e:
-                  print(f'Skip {db_id}: {e}')
 
-          if not updated:
-              print('No changes found.')
-              exit(0)
+def notion_req(path, data=None, method='GET'):
+    body = json.dumps(data).encode() if data else None
+    req = urllib.request.Request(
+        f'https://api.notion.com/v1{path}',
+        data=body,
+        headers={
+            'Authorization': f'Bearer {token}',
+            'Notion-Version': '2022-06-28',
+            'Content-Type': 'application/json'
+        },
+        method=method
+    )
+    with urllib.request.urlopen(req) as r:
+        return json.loads(r.read())
 
-          facts = [
-              {'type':'TextBlock','text':f'• {n}','wrap':True,'spacing':'None'}
-              for n in updated
-          ]
-          card = {
-              'type': 'message',
-              'attachments': [{
-                  'contentType': 'application/vnd.microsoft.card.adaptive',
-                  'content': {
-                      '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
-                      'type': 'AdaptiveCard',
-                      'version': '1.4',
-                      'body': [
-                          {
-                              'type': 'TextBlock',
-                              'text': '🔔 BigC IM Wiki อัพเดท',
-                              'weight': 'Bolder',
-                              'size': 'Large',
-                              'color': 'Accent'
-                          },
-                          {
-                              'type': 'TextBlock',
-                              'text': f'พบ {len(updated)} หน้าที่แก้ไขใน 30 นาทีล่าสุด:',
-                              'wrap': True
-                          }
-                      ] + facts + [
-                          {
-                              'type': 'TextBlock',
-                              'text': '👉 รัน Claude ingest เพื่ออัพเดท context',
-                              'weight': 'Bolder',
-                              'color': 'Warning',
-                              'wrap': True
-                          }
-                      ]
-                  }
-              }]
-          }
 
-          payload = json.dumps(card).encode()
-          req = urllib.request.Request(
-              webhook,
-              data=payload,
-              headers={'Content-Type': 'application/json'},
-              method='POST'
-          )
-          try:
-              with urllib.request.urlopen(req) as r:
-                  print(f'Teams notified: {len(updated)} pages updated')
-          except Exception as e:
-              print(f'Teams error: {e}')
-              exit(1)
-          PYEOF
+def time_ago(iso_str):
+    dt = datetime.fromisoformat(iso_str.replace('Z', '+00:00'))
+    diff = int((now - dt).total_seconds())
+    if diff < 60:   return 'just now'
+    if diff < 3600: return f'{diff // 60} min ago'
+    if diff < 86400: return f'{diff // 3600} hr ago'
+    return f'{diff // 86400} days ago'
+
+
+# --- Fetch DB names (one call per DB) ---
+db_names = {}
+for db_id in db_ids:
+    try:
+        db = notion_req(f'/databases/{db_id}')
+        parts = db.get('title', [])
+        db_names[db_id] = ''.join(t.get('plain_text', '') for t in parts) or 'Untitled DB'
+    except Exception as e:
+        db_names[db_id] = 'Notion DB'
+        print(f'DB name skip {db_id}: {e}')
+
+
+# --- Query each DB for recent changes ---
+updated = []
+for db_id in db_ids:
+    try:
+        data = notion_req(f'/databases/{db_id}/query', {
+            'filter': {
+                'timestamp': 'last_edited_time',
+                'last_edited_time': {'after': since}
+            }
+        }, 'POST')
+        for page in data.get('results', []):
+            title = ''
+            for val in page.get('properties', {}).values():
+                if val.get('type') == 'title':
+                    title = ''.join(t.get('plain_text', '') for t in val.get('title', []))
+                    break
+            page_url     = page.get('url', 'https://notion.so')
+            edited_time  = page.get('last_edited_time', '')
+            created_time = page.get('created_time', '')
+            is_new       = created_time >= since
+            updated.append({
+                'title':  title or 'Untitled',
+                'url':    page_url,
+                'db':     db_names.get(db_id, 'Notion DB'),
+                'ago':    time_ago(edited_time) if edited_time else '—',
+                'is_new': is_new,
+            })
+    except Exception as e:
+        print(f'Skip {db_id}: {e}')
+
+if not updated:
+    print('No changes found.')
+    exit(0)
+
+
+# --- Build Adaptive Card ---
+pages = updated[:5]
+extra = max(0, len(updated) - 5)
+
+page_rows = []
+for p in pages:
+    icon         = '🟢' if p['is_new'] else '✏️'
+    action_text  = f"{icon} {'New' if p['is_new'] else 'Edited'}"
+    action_color = 'Good' if p['is_new'] else 'Warning'
+
+    page_rows.append({
+        'type': 'Container',
+        'style': 'emphasis',
+        'spacing': 'Small',
+        'items': [
+            # Title row + Open button
+            {
+                'type': 'ColumnSet',
+                'columns': [
+                    {
+                        'type': 'Column',
+                        'width': 'stretch',
+                        'verticalContentAlignment': 'Center',
+                        'items': [{
+                            'type': 'TextBlock',
+                            'text': f"📄 [{p['title']}]({p['url']})",
+                            'weight': 'Bolder',
+                            'size': 'Small',
+                            'wrap': False,
+                            'color': 'Default'
+                        }]
+                    },
+                    {
+                        'type': 'Column',
+                        'width': 'auto',
+                        'verticalContentAlignment': 'Center',
+                        'items': [{
+                            'type': 'ActionSet',
+                            'actions': [{
+                                'type': 'Action.OpenUrl',
+                                'title': 'Open ↗',
+                                'url': p['url']
+                            }]
+                        }]
+                    }
+                ]
+            },
+            # Meta row: db badge · time ago · action label
+            {
+                'type': 'ColumnSet',
+                'spacing': 'None',
+                'columns': [
+                    {
+                        'type': 'Column',
+                        'width': 'auto',
+                        'items': [{
+                            'type': 'TextBlock',
+                            'text': p['db'],
+                            'size': 'Small',
+                            'isSubtle': True
+                        }]
+                    },
+                    {
+                        'type': 'Column',
+                        'width': 'auto',
+                        'items': [{
+                            'type': 'TextBlock',
+                            'text': f"· {p['ago']}",
+                            'size': 'Small',
+                            'color': 'Accent',
+                            'isSubtle': True
+                        }]
+                    },
+                    {
+                        'type': 'Column',
+                        'width': 'stretch',
+                        'items': [{
+                            'type': 'TextBlock',
+                            'text': action_text,
+                            'size': 'Small',
+                            'color': action_color,
+                            'weight': 'Bolder',
+                            'horizontalAlignment': 'Right'
+                        }]
+                    }
+                ]
+            }
+        ]
+    })
+
+extra_note = f'\n*...และอีก {extra} หน้า*' if extra > 0 else ''
+subtitle   = f"พบ {len(updated)} หน้าที่แก้ไขใน 30 นาทีล่าสุด{extra_note}"
+
+card = {
+    'type': 'message',
+    'attachments': [{
+        'contentType': 'application/vnd.microsoft.card.adaptive',
+        'content': {
+            '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+            'type': 'AdaptiveCard',
+            'version': '1.4',
+            'body': [
+                # ── Header ──────────────────────────────────────────
+                {
+                    'type': 'ColumnSet',
+                    'columns': [
+                        {
+                            'type': 'Column',
+                            'width': 'stretch',
+                            'items': [
+                                {
+                                    'type': 'TextBlock',
+                                    'text': '📓 Notion อัพเดท',
+                                    'weight': 'Bolder',
+                                    'size': 'Medium',
+                                    'color': 'Warning'
+                                },
+                                {
+                                    'type': 'TextBlock',
+                                    'text': subtitle,
+                                    'size': 'Small',
+                                    'isSubtle': True,
+                                    'wrap': True,
+                                    'spacing': 'None'
+                                }
+                            ]
+                        },
+                        {
+                            'type': 'Column',
+                            'width': 'auto',
+                            'horizontalAlignment': 'Right',
+                            'items': [
+                                {
+                                    'type': 'TextBlock',
+                                    'text': 'NOTION',
+                                    'weight': 'Bolder',
+                                    'size': 'Small',
+                                    'color': 'Warning',
+                                    'horizontalAlignment': 'Right'
+                                },
+                                {
+                                    'type': 'TextBlock',
+                                    'text': ts_str,
+                                    'size': 'Small',
+                                    'isSubtle': True,
+                                    'horizontalAlignment': 'Right',
+                                    'spacing': 'None'
+                                }
+                            ]
+                        }
+                    ]
+                },
+                # ── Separator ───────────────────────────────────────
+                {
+                    'type': 'TextBlock',
+                    'text': ' ',
+                    'separator': True,
+                    'spacing': 'Small'
+                }
+            ] + page_rows,
+            # ── Footer button ────────────────────────────────────
+            'actions': [{
+                'type': 'Action.OpenUrl',
+                'title': '📓 Open Notion',
+                'url': 'https://notion.so'
+            }]
+        }
+    }]
+}
+
+payload = json.dumps(card, ensure_ascii=False).encode('utf-8')
+req = urllib.request.Request(
+    webhook,
+    data=payload,
+    headers={'Content-Type': 'application/json; charset=utf-8'},
+    method='POST'
+)
+try:
+    with urllib.request.urlopen(req) as r:
+        print(f'Teams notified: {len(updated)} pages updated')
+except Exception as e:
+    print(f'Teams error: {e}')
+    exit(1)
+PYEOF
           python3 /tmp/check_notion.py
