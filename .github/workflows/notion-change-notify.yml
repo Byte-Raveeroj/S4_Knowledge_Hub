@@ -143,7 +143,7 @@ jobs:
                                       'text': f"📄 [{p['title']}]({p['url']})",
                                       'weight': 'Bolder',
                                       'size': 'Small',
-                                      'wrap': False
+                                      'wrap': True
                                   }]
                               },
                               {
@@ -168,7 +168,7 @@ jobs:
                           'text': meta_line,
                           'size': 'Small',
                           'isSubtle': True,
-                          'wrap': False,
+                          'wrap': True,
                           'spacing': 'None'
                       }
                   ]
