@@ -153,7 +153,7 @@ jobs:
                                   'width': 'auto',
                                   'items': [{
                                       'type': 'TextBlock',
-                                      'text': f"- {p['ago']}",
+                                      'text': p['ago'],
                                       'size': 'Small',
                                       'color': 'Accent',
                                       'isSubtle': True
@@ -189,59 +189,60 @@ jobs:
                       'version': '1.4',
                       'body': [
                           {
-                              'type': 'ColumnSet',
-                              'columns': [
-                                  {
-                                      'type': 'Column',
-                                      'width': 'stretch',
-                                      'items': [
-                                          {
-                                              'type': 'TextBlock',
-                                              'text': 'Notion Update',
-                                              'weight': 'Bolder',
-                                              'size': 'Medium',
-                                              'color': 'Warning'
-                                          },
-                                          {
-                                              'type': 'TextBlock',
-                                              'text': subtitle,
-                                              'size': 'Small',
-                                              'isSubtle': True,
-                                              'wrap': True,
-                                              'spacing': 'None'
-                                          }
-                                      ]
-                                  },
-                                  {
-                                      'type': 'Column',
-                                      'width': 'auto',
-                                      'horizontalAlignment': 'Right',
-                                      'items': [
-                                          {
-                                              'type': 'TextBlock',
-                                              'text': 'NOTION',
-                                              'weight': 'Bolder',
-                                              'size': 'Small',
-                                              'color': 'Warning',
-                                              'horizontalAlignment': 'Right'
-                                          },
-                                          {
-                                              'type': 'TextBlock',
-                                              'text': ts_str,
-                                              'size': 'Small',
-                                              'isSubtle': True,
-                                              'horizontalAlignment': 'Right',
-                                              'spacing': 'None'
-                                          }
-                                      ]
-                                  }
-                              ]
-                          },
-                          {
-                              'type': 'TextBlock',
-                              'text': ' ',
-                              'separator': True,
-                              'spacing': 'Small'
+                              'type': 'Container',
+                              'style': 'warning',
+                              'bleed': True,
+                              'items': [{
+                                  'type': 'ColumnSet',
+                                  'columns': [
+                                      {
+                                          'type': 'Column',
+                                          'width': 'stretch',
+                                          'items': [
+                                              {
+                                                  'type': 'TextBlock',
+                                                  'text': 'Notion Update',
+                                                  'weight': 'Bolder',
+                                                  'size': 'Medium',
+                                                  'color': 'Dark'
+                                              },
+                                              {
+                                                  'type': 'TextBlock',
+                                                  'text': subtitle,
+                                                  'size': 'Small',
+                                                  'color': 'Dark',
+                                                  'isSubtle': True,
+                                                  'wrap': True,
+                                                  'spacing': 'None'
+                                              }
+                                          ]
+                                      },
+                                      {
+                                          'type': 'Column',
+                                          'width': 'auto',
+                                          'horizontalAlignment': 'Right',
+                                          'items': [
+                                              {
+                                                  'type': 'TextBlock',
+                                                  'text': 'NOTION',
+                                                  'weight': 'Bolder',
+                                                  'size': 'Small',
+                                                  'color': 'Dark',
+                                                  'horizontalAlignment': 'Right'
+                                              },
+                                              {
+                                                  'type': 'TextBlock',
+                                                  'text': ts_str,
+                                                  'size': 'Small',
+                                                  'color': 'Dark',
+                                                  'isSubtle': True,
+                                                  'horizontalAlignment': 'Right',
+                                                  'spacing': 'None'
+                                              }
+                                          ]
+                                      }
+                                  ]
+                              }]
                           }
                       ] + page_rows,
                       'actions': [{
