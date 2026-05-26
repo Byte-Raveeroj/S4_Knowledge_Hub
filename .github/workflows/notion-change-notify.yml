@@ -49,6 +49,22 @@ jobs:
               if diff < 86400: return f'{diff // 3600} hr ago'
               return f'{diff // 86400} days ago'
 
+          user_cache = {}
+          def get_user_name(user_id):
+              if not user_id: return ''
+              if user_id in user_cache: return user_cache[user_id]
+              try:
+                  u = notion_req(f'/users/{user_id}')
+                  name = u.get('name', '')
+                  parts = name.strip().split()
+                  short = f"{parts[0]} {parts[-1][0]}." if len(parts) > 1 else name
+                  user_cache[user_id] = short
+                  return short
+              except:
+                  user_cache[user_id] = ''
+                  return ''
+
+          # --- Fetch DB names ---
           db_names = {}
           for db_id in db_ids:
               try:
@@ -59,6 +75,7 @@ jobs:
                   db_names[db_id] = 'Notion DB'
                   print(f'DB name skip {db_id}: {e}')
 
+          # --- Query each DB for recent changes ---
           updated = []
           for db_id in db_ids:
               try:
@@ -74,6 +91,8 @@ jobs:
                           if val.get('type') == 'title':
                               title = ''.join(t.get('plain_text', '') for t in val.get('title', []))
                               break
+                      editor_id   = page.get('last_edited_by', {}).get('id', '')
+                      editor_name = get_user_name(editor_id)
                       page_url     = page.get('url', 'https://notion.so')
                       edited_time  = page.get('last_edited_time', '')
                       created_time = page.get('created_time', '')
@@ -82,7 +101,8 @@ jobs:
                           'title':  title or 'Untitled',
                           'url':    page_url,
                           'db':     db_names.get(db_id, 'Notion DB'),
-                          'ago':    time_ago(edited_time) if edited_time else '-',
+                          'editor': editor_name,
+                          'ago':    time_ago(edited_time) if edited_time else '',
                           'is_new': is_new,
                       })
               except Exception as e:
@@ -95,15 +115,22 @@ jobs:
           pages = updated[:5]
           extra = max(0, len(updated) - 5)
 
+          # --- Build page rows ---
           page_rows = []
           for p in pages:
-              icon         = '+ New' if p['is_new'] else 'Edited'
-              action_color = 'Good' if p['is_new'] else 'Warning'
+              badge_text  = 'New'    if p['is_new'] else 'Edited'
+              badge_color = 'Good'   if p['is_new'] else 'Warning'
+
+              # meta line: "DB  ·  Editor  ·  time ago"  (skip empty parts)
+              meta_parts = [x for x in [p['db'], p['editor'], p['ago']] if x]
+              meta_line  = '  ·  '.join(meta_parts)
+
               page_rows.append({
                   'type': 'Container',
-                  'style': 'emphasis',
                   'spacing': 'Small',
+                  'separator': True,
                   'items': [
+                      # Title row + Open button
                       {
                           'type': 'ColumnSet',
                           'columns': [
@@ -116,7 +143,8 @@ jobs:
                                       'text': f"[{p['title']}]({p['url']})",
                                       'weight': 'Bolder',
                                       'size': 'Small',
-                                      'wrap': False
+                                      'wrap': False,
+                                      'color': 'Default'
                                   }]
                               },
                               {
@@ -134,39 +162,30 @@ jobs:
                               }
                           ]
                       },
+                      # Meta row: db · editor · time  +  badge right
                       {
                           'type': 'ColumnSet',
                           'spacing': 'None',
                           'columns': [
                               {
                                   'type': 'Column',
-                                  'width': 'auto',
-                                  'items': [{
-                                      'type': 'TextBlock',
-                                      'text': p['db'],
-                                      'size': 'Small',
-                                      'isSubtle': True
-                                  }]
-                              },
-                              {
-                                  'type': 'Column',
-                                  'width': 'auto',
-                                  'items': [{
-                                      'type': 'TextBlock',
-                                      'text': p['ago'],
-                                      'size': 'Small',
-                                      'color': 'Accent',
-                                      'isSubtle': True
-                                  }]
-                              },
-                              {
-                                  'type': 'Column',
                                   'width': 'stretch',
                                   'items': [{
                                       'type': 'TextBlock',
-                                      'text': icon,
+                                      'text': meta_line,
                                       'size': 'Small',
-                                      'color': action_color,
+                                      'isSubtle': True,
+                                      'wrap': False
+                                  }]
+                              },
+                              {
+                                  'type': 'Column',
+                                  'width': 'auto',
+                                  'items': [{
+                                      'type': 'TextBlock',
+                                      'text': badge_text,
+                                      'size': 'Small',
+                                      'color': badge_color,
                                       'weight': 'Bolder',
                                       'horizontalAlignment': 'Right'
                                   }]
@@ -176,8 +195,8 @@ jobs:
                   ]
               })
 
-          extra_note = f' (+{extra} more)' if extra > 0 else ''
-          subtitle   = f"{len(updated)} pages updated in the last 30 min{extra_note}"
+          extra_note = f'  *(+{extra} more)*' if extra > 0 else ''
+          subtitle   = f"พบ {len(updated)} หน้าที่แก้ไขใน 30 นาทีล่าสุด{extra_note}"
 
           card = {
               'type': 'message',
@@ -188,61 +207,56 @@ jobs:
                       'type': 'AdaptiveCard',
                       'version': '1.4',
                       'body': [
+                          # --- Header ---
                           {
-                              'type': 'Container',
-                              'style': 'warning',
-                              'bleed': True,
-                              'items': [{
-                                  'type': 'ColumnSet',
-                                  'columns': [
-                                      {
-                                          'type': 'Column',
-                                          'width': 'stretch',
-                                          'items': [
-                                              {
-                                                  'type': 'TextBlock',
-                                                  'text': 'Notion Update',
-                                                  'weight': 'Bolder',
-                                                  'size': 'Medium',
-                                                  'color': 'Dark'
-                                              },
-                                              {
-                                                  'type': 'TextBlock',
-                                                  'text': subtitle,
-                                                  'size': 'Small',
-                                                  'color': 'Dark',
-                                                  'isSubtle': True,
-                                                  'wrap': True,
-                                                  'spacing': 'None'
-                                              }
-                                          ]
-                                      },
-                                      {
-                                          'type': 'Column',
-                                          'width': 'auto',
-                                          'horizontalAlignment': 'Right',
-                                          'items': [
-                                              {
-                                                  'type': 'TextBlock',
-                                                  'text': 'NOTION',
-                                                  'weight': 'Bolder',
-                                                  'size': 'Small',
-                                                  'color': 'Dark',
-                                                  'horizontalAlignment': 'Right'
-                                              },
-                                              {
-                                                  'type': 'TextBlock',
-                                                  'text': ts_str,
-                                                  'size': 'Small',
-                                                  'color': 'Dark',
-                                                  'isSubtle': True,
-                                                  'horizontalAlignment': 'Right',
-                                                  'spacing': 'None'
-                                              }
-                                          ]
-                                      }
-                                  ]
-                              }]
+                              'type': 'ColumnSet',
+                              'columns': [
+                                  {
+                                      'type': 'Column',
+                                      'width': 'stretch',
+                                      'items': [
+                                          {
+                                              'type': 'TextBlock',
+                                              'text': 'Notion อัพเดท',
+                                              'weight': 'Bolder',
+                                              'size': 'Large',
+                                              'color': 'Warning'
+                                          },
+                                          {
+                                              'type': 'TextBlock',
+                                              'text': subtitle,
+                                              'size': 'Small',
+                                              'isSubtle': True,
+                                              'wrap': True,
+                                              'spacing': 'None'
+                                          }
+                                      ]
+                                  },
+                                  {
+                                      'type': 'Column',
+                                      'width': 'auto',
+                                      'horizontalAlignment': 'Right',
+                                      'verticalContentAlignment': 'Center',
+                                      'items': [
+                                          {
+                                              'type': 'TextBlock',
+                                              'text': 'NOTION',
+                                              'weight': 'Bolder',
+                                              'size': 'Small',
+                                              'color': 'Warning',
+                                              'horizontalAlignment': 'Right'
+                                          },
+                                          {
+                                              'type': 'TextBlock',
+                                              'text': ts_str,
+                                              'size': 'Small',
+                                              'isSubtle': True,
+                                              'horizontalAlignment': 'Right',
+                                              'spacing': 'None'
+                                          }
+                                      ]
+                                  }
+                              ]
                           }
                       ] + page_rows,
                       'actions': [{
