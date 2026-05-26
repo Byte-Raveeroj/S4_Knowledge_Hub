@@ -118,19 +118,19 @@ jobs:
           # --- Build page rows ---
           page_rows = []
           for p in pages:
-              badge_text  = 'New'    if p['is_new'] else 'Edited'
-              badge_color = 'Good'   if p['is_new'] else 'Warning'
+              badge_emoji = '🟢' if p['is_new'] else '✏️'
+              badge_label = 'New' if p['is_new'] else 'Edited'
 
-              # meta line: "DB  ·  Editor  ·  time ago"  (skip empty parts)
+              # meta: single line  "📁 DB  ·  Editor  ·  time ago  · 🟢 New"
               meta_parts = [x for x in [p['db'], p['editor'], p['ago']] if x]
-              meta_line  = '  ·  '.join(meta_parts)
+              meta_line  = '  ·  '.join(meta_parts) + f'  {badge_emoji} {badge_label}'
 
               page_rows.append({
                   'type': 'Container',
+                  'style': 'emphasis',
                   'spacing': 'Small',
-                  'separator': True,
                   'items': [
-                      # Title row + Open button
+                      # Title + Open button
                       {
                           'type': 'ColumnSet',
                           'columns': [
@@ -140,11 +140,10 @@ jobs:
                                   'verticalContentAlignment': 'Center',
                                   'items': [{
                                       'type': 'TextBlock',
-                                      'text': f"[{p['title']}]({p['url']})",
+                                      'text': f"📄 [{p['title']}]({p['url']})",
                                       'weight': 'Bolder',
                                       'size': 'Small',
-                                      'wrap': False,
-                                      'color': 'Default'
+                                      'wrap': False
                                   }]
                               },
                               {
@@ -155,42 +154,22 @@ jobs:
                                       'type': 'ActionSet',
                                       'actions': [{
                                           'type': 'Action.OpenUrl',
-                                          'title': 'Open',
-                                          'url': p['url']
+                                          'title': 'Open ↗',
+                                          'url': p['url'],
+                                          'style': 'positive'
                                       }]
                                   }]
                               }
                           ]
                       },
-                      # Meta row: db · editor · time  +  badge right
+                      # Meta — single TextBlock, no extra columns = no stray bullets
                       {
-                          'type': 'ColumnSet',
-                          'spacing': 'None',
-                          'columns': [
-                              {
-                                  'type': 'Column',
-                                  'width': 'stretch',
-                                  'items': [{
-                                      'type': 'TextBlock',
-                                      'text': meta_line,
-                                      'size': 'Small',
-                                      'isSubtle': True,
-                                      'wrap': False
-                                  }]
-                              },
-                              {
-                                  'type': 'Column',
-                                  'width': 'auto',
-                                  'items': [{
-                                      'type': 'TextBlock',
-                                      'text': badge_text,
-                                      'size': 'Small',
-                                      'color': badge_color,
-                                      'weight': 'Bolder',
-                                      'horizontalAlignment': 'Right'
-                                  }]
-                              }
-                          ]
+                          'type': 'TextBlock',
+                          'text': meta_line,
+                          'size': 'Small',
+                          'isSubtle': True,
+                          'wrap': False,
+                          'spacing': 'None'
                       }
                   ]
               })
@@ -217,7 +196,7 @@ jobs:
                                       'items': [
                                           {
                                               'type': 'TextBlock',
-                                              'text': 'Notion อัพเดท',
+                                              'text': '📓  Notion อัพเดท',
                                               'weight': 'Bolder',
                                               'size': 'Large',
                                               'color': 'Warning'
