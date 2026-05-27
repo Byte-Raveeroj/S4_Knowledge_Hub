@@ -125,7 +125,7 @@ jobs:
 
               page_rows.append({
                   'type': 'Container',
-                  'style': 'emphasis',
+                  'style': 'accent',
                   'spacing': 'Small',
                   'items': [
                       # Title + Open button
