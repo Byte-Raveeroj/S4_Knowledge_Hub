@@ -128,6 +128,7 @@ jobs:
               page_rows.append({
                   'type': 'Container',
                   'style': 'emphasis',
+                  'bleed': True,
                   'spacing': 'Small',
                   'items': [
                       # Title + Open button
@@ -142,7 +143,7 @@ jobs:
                                       'type': 'TextBlock',
                                       'text': f"📄 [{p['title']}]({p['url']})",
                                       'weight': 'Bolder',
-                                      'size': 'Small',
+                                      'size': 'Default',
                                       'wrap': True
                                   }]
                               },
