@@ -184,19 +184,6 @@ jobs:
                       'version': '1.4',
                       'msteams': {'width': 'Full'},
                       'body': [
-                          # --- Accent strip top ---
-                          {
-                              'type': 'Container',
-                              'style': 'warning',
-                              'bleed': True,
-                              'spacing': 'None',
-                              'items': [{
-                                  'type': 'TextBlock',
-                                  'text': ' ',
-                                  'size': 'Small',
-                                  'spacing': 'None'
-                              }]
-                          },
                           # --- Header ---
                           {
                               'type': 'ColumnSet',
