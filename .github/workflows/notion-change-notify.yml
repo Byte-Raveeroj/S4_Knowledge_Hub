@@ -141,8 +141,7 @@ jobs:
                                   'verticalContentAlignment': 'Center',
                                   'items': [{
                                       'type': 'TextBlock',
-                                      'text': f"📄 [{p['title']}]({p['url']})",
-                                      'weight': 'Bolder',
+                                      'text': f"📄 **[{p['title']}]({p['url']})**",
                                       'size': 'Default',
                                       'wrap': True
                                   }]
