@@ -139,6 +139,7 @@ jobs:
                                   'items': [{
                                       'type': 'TextBlock',
                                       'text': f"📄 **[{p['title']}]({p['url']})**",
+                                      'weight': 'Bolder',
                                       'size': 'Default',
                                       'wrap': True
                                   }]
